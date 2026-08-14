@@ -1,0 +1,216 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-handwriting: 'Dancing Script', cursive;
+    --font-french: 'Parisienne', cursive;
+    --font-serif-fancy: 'Playfair Display', serif;
+    --font-editorial: 'Cormorant Garamond', serif;
+    --font-terminal: 'VT323', monospace;
+    --font-main: 'Montserrat', sans-serif;
+  }
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace, cursive;
+}
+
+.font-script {
+  font-family: 'Dancing Script', cursive;
+}
+
+.font-french {
+  font-family: 'Parisienne', cursive;
+}
+
+.font-serif-fancy {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-terminal {
+  font-family: 'VT323', monospace;
+}
+
+.font-main {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Girly Fancy & Luxury Glowing Classes */
+.glow-pink {
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.45), inset 0 0 10px rgba(251, 207, 232, 0.2);
+}
+
+.glow-pink-strong {
+  box-shadow: 0 0 30px rgba(244, 114, 182, 0.7), 0 0 60px rgba(236, 72, 153, 0.4), inset 0 0 15px rgba(253, 164, 175, 0.3);
+}
+
+.glow-rose-gold {
+  box-shadow: 0 0 20px rgba(251, 146, 60, 0.4), 0 0 30px rgba(244, 114, 182, 0.35);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.35), inset 0 0 10px rgba(74, 222, 128, 0.15);
+}
+
+.glow-text-pink {
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.85), 0 0 20px rgba(236, 72, 153, 0.5);
+}
+
+.glow-text-gold {
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.85), 0 0 20px rgba(217, 119, 6, 0.5);
+}
+
+.glow-text-emerald {
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.8), 0 0 16px rgba(34, 197, 94, 0.5);
+}
+
+/* Shimmering Fancy Border */
+.border-fancy-rose {
+  border-color: rgba(244, 114, 182, 0.35);
+  transition: all 0.3s ease;
+}
+.border-fancy-rose:hover {
+  border-color: rgba(244, 114, 182, 0.8);
+  box-shadow: 0 0 25px rgba(244, 114, 182, 0.3);
+}
+
+/* Scanlines overlay effect */
+.crt-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 105, 180, 0.02),
+    rgba(0, 255, 128, 0.01),
+    rgba(255, 215, 0, 0.02)
+  );
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Custom Girly Fancy Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d060e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #db2777;
+  border-radius: 9999px;
+  border: 1px solid #f472b6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f472b6;
+}
+
+/* Floating Animations */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(-2deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+/* Sparkle & Shimmer Animation */
+@keyframes sparkleShimmer {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(180deg);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkleShimmer 3s ease-in-out infinite;
+}
+
+@keyframes rosePetalFall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(105vh) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-petal {
+  animation: rosePetalFall var(--petal-duration, 10s) linear infinite;
+  animation-delay: var(--petal-delay, 0s);
+}
+
+/* Glitch Animation for retro touches */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+    text-shadow: 2px 2px #f472b6, -2px -2px #34d399;
+  }
+  20% {
+    transform: translate(-2px, 2px);
+    text-shadow: -2px -2px #f472b6, 2px 2px #fbbf24;
+  }
+  40% {
+    transform: translate(-2px, -2px);
+    text-shadow: 2px -2px #ec4899, -2px 2px #34d399;
+  }
+  60% {
+    transform: translate(2px, 2px);
+    text-shadow: -2px 2px #f472b6, 2px -2px #fbbf24;
+  }
+  80% {
+    transform: translate(2px, -2px);
+    text-shadow: 2px 2px #ec4899, -2px -2px #34d399;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: 2px 2px #f472b6, -2px -2px #34d399;
+  }
+}
+
+.glitch-active {
+  animation: glitch 0.35s infinite ease-in-out;
+}

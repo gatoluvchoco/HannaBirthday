@@ -1,0 +1,6 @@
+{
+  "name": "HANNA.EXE | Level 20 Birthday Adventure",
+  "description": "A cyber-romantic retro arcade and virtual sanctuary birthday experience crafted for Hanna with interactive mini-games, memories, virtual room, love letter, and final surprise vault.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
