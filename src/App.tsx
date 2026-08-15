@@ -255,15 +255,25 @@ export default function App() {
       {/* Easter Egg Modal */}
       <AnimatePresence>
         {easterEggModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div 
+            onClick={() => {
+              sound.playClick();
+              setEasterEggModal(false);
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          >
             <motion.div
+              onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               className="bg-[#1c071e] border-2 border-amber-300 rounded-3xl p-6 max-w-md w-full text-center glow-gold relative shadow-2xl"
             >
               <button
-                onClick={() => setEasterEggModal(false)}
+                onClick={() => {
+                  sound.playClick();
+                  setEasterEggModal(false);
+                }}
                 className="absolute top-4 right-4 p-1.5 rounded-xl bg-pink-950 border border-pink-700 text-pink-300 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />

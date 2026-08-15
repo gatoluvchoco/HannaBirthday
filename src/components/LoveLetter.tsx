@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { sound } from '../utils/audio';
-import { ArrowLeft, Sparkles, Heart, Edit3, Check, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Sparkles, Heart, Edit3, Check, RotateCcw, X } from 'lucide-react';
 
 interface LoveLetterProps {
   girlfriendName: string;
@@ -190,8 +190,26 @@ export const LoveLetter: React.FC<LoveLetterProps> = ({
 
       {/* Edit Letter Modal */}
       {isEditing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-          <div className="bg-[#160618] border-2 border-pink-400/60 rounded-3xl p-6 max-w-lg w-full shadow-[0_0_40px_rgba(244,114,182,0.3)]">
+        <div 
+          onClick={() => {
+            sound.playClick();
+            setIsEditing(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#160618] border-2 border-pink-400/60 rounded-3xl p-6 max-w-lg w-full shadow-[0_0_40px_rgba(244,114,182,0.3)] relative"
+          >
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsEditing(false);
+              }}
+              className="absolute top-4 right-4 p-1.5 rounded-xl bg-pink-950/80 border border-pink-500/40 text-pink-200 hover:bg-pink-900 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
             <h3 className="text-lg font-serif-fancy font-bold text-pink-200 mb-3">
               Customize Love Letter Message
             </h3>

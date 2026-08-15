@@ -38,8 +38,17 @@ export const ConfigModal: React.FC<ConfigModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div className="bg-[#18061a] border-2 border-pink-400/70 rounded-3xl p-5 sm:p-7 max-w-lg w-full shadow-[0_0_50px_rgba(244,114,182,0.35)] relative max-h-[90vh] overflow-y-auto">
+    <div 
+      onClick={() => {
+        sound.playClick();
+        onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-[#18061a] border-2 border-pink-400/70 rounded-3xl p-5 sm:p-7 max-w-lg w-full shadow-[0_0_50px_rgba(244,114,182,0.35)] relative max-h-[90vh] overflow-y-auto"
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-5 border-b border-pink-500/30 pb-3">
           <div className="flex items-center gap-2">
@@ -49,7 +58,10 @@ export const ConfigModal: React.FC<ConfigModalProps> = ({
             </h3>
           </div>
           <button
-            onClick={onClose}
+            onClick={() => {
+              sound.playClick();
+              onClose();
+            }}
             className="p-1.5 rounded-xl bg-pink-950/80 border border-pink-500/40 text-pink-200 hover:bg-pink-900 cursor-pointer"
           >
             <X className="w-4 h-4" />

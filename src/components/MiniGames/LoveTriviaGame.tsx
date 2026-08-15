@@ -86,12 +86,24 @@ export const LoveTriviaGame: React.FC<LoveTriviaGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div className="bg-[#18061a] border-2 border-pink-400/70 rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-[0_0_50px_rgba(244,114,182,0.35)] relative flex flex-col items-center">
+    <div 
+      onClick={() => {
+        sound.playClick();
+        onBack();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-[#18061a] border-2 border-pink-400/70 rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-[0_0_50px_rgba(244,114,182,0.35)] relative flex flex-col items-center"
+      >
         {/* Header */}
         <div className="w-full flex items-center justify-between mb-4 border-b border-pink-500/30 pb-2.5">
           <button
-            onClick={onBack}
+            onClick={() => {
+              sound.playClick();
+              onBack();
+            }}
             className="p-1.5 rounded-xl bg-pink-950/80 border border-pink-500/40 text-pink-200 hover:bg-pink-900 cursor-pointer"
           >
             <X className="w-4 h-4" />

@@ -229,15 +229,25 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
       {/* Expanded Polaroid Modal */}
       <AnimatePresence>
         {selectedMemory && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div 
+            onClick={() => {
+              sound.playClick();
+              setSelectedMemory(null);
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          >
             <motion.div
+              onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-[#faf5f8] rounded-3xl p-6 max-w-lg w-full shadow-[0_20px_50px_rgba(244,114,182,0.4)] relative"
             >
               <button
-                onClick={() => setSelectedMemory(null)}
+                onClick={() => {
+                  sound.playClick();
+                  setSelectedMemory(null);
+                }}
                 className="absolute top-4 right-4 p-2 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-800 cursor-pointer shadow-sm"
               >
                 <X className="w-4 h-4" />
@@ -268,7 +278,10 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
 
               <div className="flex justify-end">
                 <button
-                  onClick={() => setSelectedMemory(null)}
+                  onClick={() => {
+                    sound.playClick();
+                    setSelectedMemory(null);
+                  }}
                   className="px-6 py-2.5 bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200 text-[#1f051c] font-serif-fancy font-bold text-xs rounded-2xl hover:brightness-110 transition-all cursor-pointer uppercase tracking-wider shadow-md"
                 >
                   CLOSE POLAROID
@@ -282,16 +295,29 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
       {/* Add Memory Modal */}
       <AnimatePresence>
         {isAdding && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div 
+            onClick={() => {
+              sound.playClick();
+              setIsAdding(false);
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+          >
             <motion.div
+              onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#160618] border-2 border-pink-400/60 rounded-3xl p-6 max-w-md w-full shadow-[0_0_40px_rgba(244,114,182,0.3)]"
+              className="bg-[#160618] border-2 border-pink-400/60 rounded-3xl p-6 max-w-md w-full shadow-[0_0_40px_rgba(244,114,182,0.3)] relative"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-serif-fancy font-bold text-pink-200">ADD NEW POLAROID</h3>
-                <button onClick={() => setIsAdding(false)} className="text-pink-300 hover:text-white cursor-pointer">
+                <button 
+                  onClick={() => {
+                    sound.playClick();
+                    setIsAdding(false);
+                  }} 
+                  className="p-1.5 rounded-xl bg-pink-950/80 border border-pink-500/40 text-pink-200 hover:bg-pink-900 cursor-pointer"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>
