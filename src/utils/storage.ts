@@ -141,31 +141,89 @@ export const DEFAULT_CONFIG: AppConfig = {
 };
 
 const PROGRESS_KEY = 'hanna_exe_progress_v3';
+const BACKUP_XP_KEY = 'hanna_exe_xp_backup';
 const CONFIG_KEY = 'hanna_exe_config_v3';
 
 export const INITIAL_PROGRESS: UserProgress = {
   xp: 0,
   visitedSections: [],
   interactedObjects: [],
+  visitedStoryEvents: [],
+  visitedMemories: [],
   gamesWon: [],
   letterOpened: false,
   candlesBlown: false,
   redeemedCoupons: [],
-  easterEggFound: false
+  easterEggFound: false,
+  lastSaved: Date.now(),
 };
 
 export function loadStoredProgress(): UserProgress {
   try {
     const data = localStorage.getItem(PROGRESS_KEY);
-    return data ? JSON.parse(data) : INITIAL_PROGRESS;
-  } catch {
-    return INITIAL_PROGRESS;
+    if (!data) {
+      // First time player: start cleanly at 0 XP
+      return { ...INITIAL_PROGRESS };
+    }
+
+    const parsed = JSON.parse(data);
+
+    const safeProgress: UserProgress = {
+      xp: typeof parsed?.xp === 'number' && !isNaN(parsed.xp) ? Math.max(0, parsed.xp) : 0,
+      visitedSections: Array.isArray(parsed?.visitedSections) ? parsed.visitedSections : [],
+      interactedObjects: Array.isArray(parsed?.interactedObjects) ? parsed.interactedObjects : [],
+      visitedStoryEvents: Array.isArray(parsed?.visitedStoryEvents) ? parsed.visitedStoryEvents : [],
+      visitedMemories: Array.isArray(parsed?.visitedMemories) ? parsed.visitedMemories : [],
+      gamesWon: Array.isArray(parsed?.gamesWon) ? parsed.gamesWon : [],
+      letterOpened: Boolean(parsed?.letterOpened),
+      candlesBlown: Boolean(parsed?.candlesBlown),
+      redeemedCoupons: Array.isArray(parsed?.redeemedCoupons) ? parsed.redeemedCoupons : [],
+      easterEggFound: Boolean(parsed?.easterEggFound),
+      lastSaved: parsed?.lastSaved || Date.now(),
+    };
+
+    return safeProgress;
+  } catch (e) {
+    console.warn("Recovered from progress load failure, starting at 0", e);
+    return { ...INITIAL_PROGRESS };
   }
+}
+
+export function resetStoredProgress(): UserProgress {
+  try {
+    localStorage.removeItem(PROGRESS_KEY);
+    localStorage.removeItem(BACKUP_XP_KEY);
+    localStorage.removeItem('hanna_exe_progress_v2');
+    localStorage.removeItem('hanna_exe_progress');
+    localStorage.removeItem('hanna_xp_data');
+    sessionStorage.removeItem(PROGRESS_KEY);
+  } catch {
+    // ignore
+  }
+  const clean = { ...INITIAL_PROGRESS, lastSaved: Date.now() };
+  saveStoredProgress(clean);
+  return clean;
 }
 
 export function saveStoredProgress(progress: UserProgress): void {
   try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    const updated = {
+      ...progress,
+      lastSaved: Date.now(),
+    };
+    const json = JSON.stringify(updated);
+    
+    // Save to primary storage
+    localStorage.setItem(PROGRESS_KEY, json);
+    // Redundant direct XP backup key
+    localStorage.setItem(BACKUP_XP_KEY, String(progress.xp || 0));
+
+    // Try session storage backup
+    try {
+      sessionStorage.setItem(PROGRESS_KEY, json);
+    } catch {
+      // ignore
+    }
   } catch (e) {
     console.error("Failed to save progress", e);
   }

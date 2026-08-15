@@ -6,6 +6,7 @@ import {
   loadStoredProgress, 
   saveStoredConfig, 
   saveStoredProgress, 
+  resetStoredProgress,
   INITIAL_PROGRESS 
 } from './utils/storage';
 import { sound } from './utils/audio';
@@ -44,13 +45,36 @@ export default function App() {
     saveStoredConfig(config);
   }, [config]);
 
+  // Ensure progress is immediately saved on tab close / browser minimize
+  useEffect(() => {
+    const handleSaveOnExit = () => {
+      saveStoredProgress(progress);
+      saveStoredConfig(config);
+    };
+
+    window.addEventListener('beforeunload', handleSaveOnExit);
+    window.addEventListener('pagehide', handleSaveOnExit);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        handleSaveOnExit();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleSaveOnExit);
+      window.removeEventListener('pagehide', handleSaveOnExit);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [progress, config]);
+
   const toggleMute = () => {
     const next = !isMuted;
     setIsMuted(next);
     sound.setMuted(next);
   };
 
-  // Handle XP gains with sound & floating badge
+  // Handle XP gains with sound & floating badge and immediate atomic storage
   const addXP = useCallback((amount: number, reason: string) => {
     setProgress((prev) => {
       const nextXP = Math.min(config.targetXP, prev.xp + amount);
@@ -66,10 +90,15 @@ export default function App() {
         });
       }
 
-      return {
+      const updatedProgress: UserProgress = {
         ...prev,
-        xp: nextXP
+        xp: nextXP,
+        lastSaved: Date.now(),
       };
+
+      // Immediate synchronous persistence
+      saveStoredProgress(updatedProgress);
+      return updatedProgress;
     });
 
     setXpToast({ id: Date.now(), amount, reason });
@@ -78,15 +107,33 @@ export default function App() {
     }, 2800);
   }, [config.targetXP]);
 
+  // Manual save trigger from Header
+  const handleManualSave = useCallback(() => {
+    saveStoredProgress(progress);
+    saveStoredConfig(config);
+    setXpToast({
+      id: Date.now(),
+      amount: 0,
+      reason: `Saved to device! (${progress.xp}/${config.targetXP} XP ready)`
+    });
+    setTimeout(() => {
+      setXpToast(null);
+    }, 2500);
+  }, [progress, config]);
+
   // Navigation Handler with section visit tracking
   const navigateTo = (section: ActiveSection) => {
     setActiveSection(section);
     if (section !== 'main-menu' && section !== 'loading') {
       if (!progress.visitedSections.includes(section)) {
-        setProgress(p => ({
-          ...p,
-          visitedSections: [...p.visitedSections, section]
-        }));
+        setProgress(p => {
+          const updated = {
+            ...p,
+            visitedSections: [...p.visitedSections, section]
+          };
+          saveStoredProgress(updated);
+          return updated;
+        });
       }
     }
   };
@@ -96,7 +143,11 @@ export default function App() {
     setEasterEggModal(true);
     sound.playLevelUp();
     if (!progress.easterEggFound) {
-      setProgress(p => ({ ...p, easterEggFound: true }));
+      setProgress(p => {
+        const updated = { ...p, easterEggFound: true };
+        saveStoredProgress(updated);
+        return updated;
+      });
       addXP(25, "Found Secret Easter Egg!");
     }
   };
@@ -171,7 +222,8 @@ export default function App() {
   };
 
   const handleResetProgress = () => {
-    setProgress(INITIAL_PROGRESS);
+    const clean = resetStoredProgress();
+    setProgress(clean);
     setActiveSection('loading');
   };
 
@@ -249,6 +301,8 @@ export default function App() {
           onStart={() => navigateTo('main-menu')}
           girlfriendName={config.girlfriendName}
           level={config.level}
+          savedXP={progress.xp}
+          targetXP={config.targetXP}
         />
       ) : (
         <div className="min-h-screen flex flex-col justify-between pt-3 pb-8 px-2 sm:px-4">
@@ -264,6 +318,7 @@ export default function App() {
             onToggleCRT={() => setCrtEnabled(prev => !prev)}
             onOpenSettings={() => setIsSettingsOpen(true)}
             onTriggerEasterEgg={triggerEasterEgg}
+            onManualSave={handleManualSave}
           />
 
           {/* Active Interactive Section */}
@@ -276,14 +331,30 @@ export default function App() {
                 musicTitle={config.musicTitle}
                 visitedSections={progress.visitedSections}
                 gamesWon={progress.gamesWon}
+                progress={progress}
               />
             )}
 
             {activeSection === 'story' && (
               <OurStory
                 story={config.story}
+                visitedEvents={progress.visitedStoryEvents || []}
                 onBack={() => navigateTo('main-menu')}
-                onGainXP={(amt) => addXP(amt, "Explored Story Chapter")}
+                onGainXP={(amt, id) => {
+                  addXP(amt, "Explored Story Chapter");
+                  if (id) {
+                    setProgress(p => {
+                      const updated = {
+                        ...p,
+                        visitedStoryEvents: p.visitedStoryEvents?.includes(id)
+                          ? p.visitedStoryEvents
+                          : [...(p.visitedStoryEvents || []), id]
+                      };
+                      saveStoredProgress(updated);
+                      return updated;
+                    });
+                  }
+                }}
                 onAddStoryEvent={handleAddStoryEvent}
               />
             )}
@@ -291,8 +362,23 @@ export default function App() {
             {activeSection === 'memories' && (
               <MemoryGallery
                 memories={config.memories}
+                visitedMemories={progress.visitedMemories || []}
                 onBack={() => navigateTo('main-menu')}
-                onGainXP={(amt) => addXP(amt, "Viewed Sweet Polaroid")}
+                onGainXP={(amt, id) => {
+                  addXP(amt, "Viewed Sweet Polaroid");
+                  if (id) {
+                    setProgress(p => {
+                      const updated = {
+                        ...p,
+                        visitedMemories: p.visitedMemories?.includes(id)
+                          ? p.visitedMemories
+                          : [...(p.visitedMemories || []), id]
+                      };
+                      saveStoredProgress(updated);
+                      return updated;
+                    });
+                  }
+                }}
                 onAddMemory={handleAddMemory}
               />
             )}
@@ -300,8 +386,23 @@ export default function App() {
             {activeSection === 'room' && (
               <VirtualRoom
                 girlfriendName={config.girlfriendName}
+                interactedObjects={progress.interactedObjects || []}
                 onBack={() => navigateTo('main-menu')}
-                onGainXP={(amt) => addXP(amt, "Found Room Keepsake")}
+                onGainXP={(amt, id) => {
+                  addXP(amt, "Found Room Keepsake");
+                  if (id) {
+                    setProgress(p => {
+                      const updated = {
+                        ...p,
+                        interactedObjects: p.interactedObjects.includes(id)
+                          ? p.interactedObjects
+                          : [...p.interactedObjects, id]
+                      };
+                      saveStoredProgress(updated);
+                      return updated;
+                    });
+                  }
+                }}
               />
             )}
 
@@ -311,10 +412,14 @@ export default function App() {
                 onBack={() => navigateTo('main-menu')}
                 onWinGame={(gameId, xp) => {
                   addXP(xp, `Cleared ${gameId} Mini-Game!`);
-                  setProgress(p => ({
-                    ...p,
-                    gamesWon: p.gamesWon.includes(gameId) ? p.gamesWon : [...p.gamesWon, gameId]
-                  }));
+                  setProgress(p => {
+                    const updated = {
+                      ...p,
+                      gamesWon: p.gamesWon.includes(gameId) ? p.gamesWon : [...p.gamesWon, gameId]
+                    };
+                    saveStoredProgress(updated);
+                    return updated;
+                  });
                 }}
                 gamesWon={progress.gamesWon}
               />
@@ -329,7 +434,11 @@ export default function App() {
                 onUpdateLetter={handleUpdateLetter}
                 onGainXP={(amt) => {
                   addXP(amt, "Unsealed Love Letter");
-                  setProgress(p => ({ ...p, letterOpened: true }));
+                  setProgress(p => {
+                    const updated = { ...p, letterOpened: true };
+                    saveStoredProgress(updated);
+                    return updated;
+                  });
                 }}
                 isLetterOpened={progress.letterOpened}
               />

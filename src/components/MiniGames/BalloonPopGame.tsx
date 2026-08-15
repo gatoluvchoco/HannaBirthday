@@ -62,18 +62,21 @@ export const BalloonPopGame: React.FC<BalloonPopGameProps> = ({ onBack, onWin })
   }, [isWon]);
 
   const handlePop = (id: number) => {
+    if (isWon) return;
     sound.playPop();
     setBalloons(prev => prev.map(b => b.id === id ? { ...b, popped: true } : b));
-    setScore(s => {
-      const next = s + 1;
-      if (next >= targetScore) {
-        setIsWon(true);
-        sound.playLevelUp();
-        confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 }, colors: ['#f472b6', '#fbbf24', '#ffffff'] });
+    
+    const newScore = score + 1;
+    setScore(newScore);
+
+    if (newScore >= targetScore && !isWon) {
+      setIsWon(true);
+      sound.playLevelUp();
+      confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 }, colors: ['#f472b6', '#fbbf24', '#ffffff'] });
+      setTimeout(() => {
         onWin();
-      }
-      return next;
-    });
+      }, 10);
+    }
   };
 
   return (

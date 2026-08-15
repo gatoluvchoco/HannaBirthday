@@ -5,8 +5,9 @@ import { ArrowLeft, Sparkles, Heart, Crown, Compass, X } from 'lucide-react';
 
 interface VirtualRoomProps {
   girlfriendName: string;
+  interactedObjects?: string[];
   onBack: () => void;
-  onGainXP: (amount: number) => void;
+  onGainXP: (amount: number, objectId?: string) => void;
 }
 
 interface RoomObject {
@@ -22,11 +23,14 @@ interface RoomObject {
 
 export const VirtualRoom: React.FC<VirtualRoomProps> = ({
   girlfriendName,
+  interactedObjects = [],
   onBack,
   onGainXP,
 }) => {
   const [selectedObj, setSelectedObj] = useState<RoomObject | null>(null);
-  const [interactedObjects, setInteractedObjects] = useState<string[]>([]);
+  const [localInteracted, setLocalInteracted] = useState<string[]>(interactedObjects);
+
+  const allInteracted = Array.from(new Set([...interactedObjects, ...localInteracted]));
 
   const roomObjects: RoomObject[] = [
     {
@@ -111,9 +115,9 @@ export const VirtualRoom: React.FC<VirtualRoomProps> = ({
 
     setSelectedObj(obj);
 
-    if (!interactedObjects.includes(obj.id)) {
-      setInteractedObjects(prev => [...prev, obj.id]);
-      onGainXP(10);
+    if (!allInteracted.includes(obj.id)) {
+      setLocalInteracted(prev => [...prev, obj.id]);
+      onGainXP(10, obj.id);
     }
   };
 
@@ -134,7 +138,7 @@ export const VirtualRoom: React.FC<VirtualRoomProps> = ({
 
         <div className="flex items-center gap-2 text-xs font-mono text-pink-300 bg-pink-950/80 px-3.5 py-1.5 rounded-2xl border border-pink-500/30">
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>KEEPSAKES: {interactedObjects.length} / {roomObjects.length} FOUND (+10 XP EACH)</span>
+          <span>KEEPSAKES: {allInteracted.length} / {roomObjects.length} FOUND (+10 XP EACH)</span>
         </div>
       </div>
 

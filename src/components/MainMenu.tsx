@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { sound } from '../utils/audio';
-import { ActiveSection } from '../types';
-import { Play, Pause, RotateCcw, ArrowRight, Heart, Sparkles, Crown, Gift, Music, Clock } from 'lucide-react';
+import { ActiveSection, UserProgress } from '../types';
+import { Play, Pause, RotateCcw, ArrowRight, Heart, Sparkles, Crown, Gift, Music, Clock, Map, LayoutGrid } from 'lucide-react';
+import { LevelMap } from './LevelMap';
 
 interface MainMenuProps {
   onNavigate: (section: ActiveSection) => void;
@@ -11,6 +12,7 @@ interface MainMenuProps {
   musicTitle?: string;
   visitedSections: string[];
   gamesWon: string[];
+  progress?: UserProgress;
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({
@@ -19,10 +21,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   targetXP,
   musicTitle,
   visitedSections,
-  gamesWon
+  gamesWon,
+  progress,
 }) => {
   const isFinalUnlocked = xp >= targetXP;
   const syncRemaining = Math.max(0, targetXP - xp);
+
+  // Tab View state: 'bento' vs 'map'
+  const [viewMode, setViewMode] = useState<'bento' | 'map'>('bento');
 
   // Live Birmingham UK (BST) Time Clock & 20 August Countdown
   const [birminghamTime, setBirminghamTime] = useState('');
@@ -31,7 +37,17 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
   // Audio state in Bento Box
   const [isPlaying, setIsPlaying] = useState(sound.isPlayingBGM());
-  const [trackIndex, setTrackIndex] = useState(0);
+
+  const currentProgress: UserProgress = progress || {
+    xp,
+    visitedSections,
+    interactedObjects: [],
+    gamesWon,
+    letterOpened: visitedSections.includes('letter'),
+    candlesBlown: visitedSections.includes('candles'),
+    redeemedCoupons: [],
+    easterEggFound: false,
+  };
 
   useEffect(() => {
     const updateBirminghamClock = () => {
@@ -109,8 +125,60 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
   return (
     <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 py-2 z-10 flex flex-col gap-5">
-      {/* Bento Grid Container */}
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 flex-grow">
+      {/* View Switcher: Interactive Level Map vs Royal Bento Grid */}
+      <div className="flex items-center justify-between gap-3 bg-[#160717]/80 border border-pink-500/30 rounded-2xl p-2 px-3 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              sound.playClick();
+              setViewMode('bento');
+            }}
+            className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              viewMode === 'bento'
+                ? 'bg-gradient-to-r from-pink-500 to-rose-400 text-white shadow-[0_0_15px_rgba(244,114,182,0.4)]'
+                : 'text-pink-300/70 hover:text-pink-200 hover:bg-pink-950/60'
+            }`}
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            <span>BENTO GRID</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sound.playSparkle();
+              setViewMode('map');
+            }}
+            className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              viewMode === 'map'
+                ? 'bg-gradient-to-r from-amber-400 via-rose-400 to-pink-500 text-[#120512] shadow-[0_0_18px_rgba(251,191,36,0.5)] font-black'
+                : 'text-pink-300/70 hover:text-pink-200 hover:bg-pink-950/60'
+            }`}
+          >
+            <Map className="w-3.5 h-3.5 text-amber-300" />
+            <span>LEVEL MAP VIEW</span>
+            <span className="text-[9px] bg-pink-950/90 text-pink-200 px-1.5 py-0.2 rounded border border-pink-500/40">
+              NEW 🌟
+            </span>
+          </button>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-pink-300/80">
+          <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '6s' }} />
+          <span>{viewMode === 'map' ? 'Interactive Journey Path' : 'Quick Access Dashboard'}</span>
+        </div>
+      </div>
+
+      {/* Conditionally Render Level Map or Royal Bento Grid */}
+      {viewMode === 'map' ? (
+        <LevelMap
+          progress={currentProgress}
+          targetXP={targetXP}
+          onSelectSection={onNavigate}
+          canUnlockVault={isFinalUnlocked}
+        />
+      ) : (
+        /* Bento Grid Container */
+        <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 flex-grow">
         
         {/* BENTO ITEM 1 (2x2): Featured Romantic Memory / Story */}
         <motion.div
@@ -397,15 +465,20 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         </motion.div>
 
       </main>
+      )}
 
       {/* Bento Footer Bar */}
       <footer className="flex flex-col sm:flex-row justify-between items-center gap-2 pt-3 border-t border-pink-500/20 text-[11px] text-pink-300/70 font-mono select-none">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <span className="flex items-center gap-1.5 text-pink-300">
             <span className="w-2 h-2 rounded-full bg-pink-400 animate-ping" />
             <span>DEVOTION: 100% INFINITE</span>
           </span>
-          <span className="text-pink-400/80">🎀 LEVEL 23 PRINCESS PROTOCOL ACTIVE</span>
+          <span className="text-emerald-400 flex items-center gap-1">
+            <span>💾</span>
+            <span>XP AUTO-SAVED ({xp}/{targetXP})</span>
+          </span>
+          <span className="text-pink-400/80">🎀 LEVEL 23 PROTOCOL ACTIVE</span>
         </div>
         <div className="font-sans text-xs font-medium text-pink-200/80 flex items-center gap-1">
           <span>Crafted with endless love for Hanna by Afiq</span>

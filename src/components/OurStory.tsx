@@ -6,20 +6,24 @@ import { ArrowLeft, Sparkles, Heart, Calendar, Plus, X } from 'lucide-react';
 
 interface OurStoryProps {
   story: StoryEvent[];
+  visitedEvents?: string[];
   onBack: () => void;
   onAddStoryEvent: (event: StoryEvent) => void;
-  onGainXP: (amount: number) => void;
+  onGainXP: (amount: number, eventId?: string) => void;
 }
 
 export const OurStory: React.FC<OurStoryProps> = ({
   story,
+  visitedEvents = [],
   onBack,
   onAddStoryEvent,
   onGainXP,
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<StoryEvent | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [clickedEvents, setClickedEvents] = useState<string[]>([]);
+  const [localClicked, setLocalClicked] = useState<string[]>(visitedEvents);
+
+  const allClicked = Array.from(new Set([...visitedEvents, ...localClicked]));
 
   // Form fields for adding new memory chapter
   const [newDate, setNewDate] = useState('');
@@ -30,9 +34,9 @@ export const OurStory: React.FC<OurStoryProps> = ({
   const handleEventClick = (event: StoryEvent) => {
     sound.playHeartCatch();
     setSelectedEvent(event);
-    if (!clickedEvents.includes(event.id)) {
-      setClickedEvents((prev) => [...prev, event.id]);
-      onGainXP(5);
+    if (!allClicked.includes(event.id)) {
+      setLocalClicked(prev => [...prev, event.id]);
+      onGainXP(5, event.id);
     }
   };
 
@@ -104,7 +108,7 @@ export const OurStory: React.FC<OurStoryProps> = ({
       {/* Bento Grid Story Timeline */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
         {story.map((item, idx) => {
-          const isClicked = clickedEvents.includes(item.id);
+          const isClicked = allClicked.includes(item.id);
           return (
             <motion.div
               key={item.id}

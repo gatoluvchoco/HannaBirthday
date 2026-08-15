@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sound } from '../utils/audio';
-import { Volume2, VolumeX, Monitor, Settings, Crown, Sparkles, Heart, Clock } from 'lucide-react';
+import { Volume2, VolumeX, Monitor, Settings, Crown, Sparkles, Heart, Clock, Save, Check } from 'lucide-react';
 
 interface HeaderHUDProps {
   playerName: string;
@@ -13,6 +13,7 @@ interface HeaderHUDProps {
   onToggleCRT: () => void;
   onOpenSettings: () => void;
   onTriggerEasterEgg: () => void;
+  onManualSave?: () => void;
 }
 
 export const HeaderHUD: React.FC<HeaderHUDProps> = ({
@@ -26,9 +27,11 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   onToggleCRT,
   onOpenSettings,
   onTriggerEasterEgg,
+  onManualSave,
 }) => {
   const [avatarClicks, setAvatarClicks] = useState(0);
   const [birminghamTime, setBirminghamTime] = useState('');
+  const [justSaved, setJustSaved] = useState(false);
 
   const xpPercent = Math.min(100, Math.floor((xp / targetXP) * 100));
 
@@ -63,6 +66,17 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   const handleToggleSound = () => {
     sound.playClick();
     onToggleMute();
+  };
+
+  const handleSaveClick = () => {
+    sound.playSparkle();
+    if (onManualSave) {
+      onManualSave();
+    }
+    setJustSaved(true);
+    setTimeout(() => {
+      setJustSaved(false);
+    }, 2000);
   };
 
   return (
@@ -119,6 +133,10 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
                 <span className="font-bold text-amber-300">
                   {xp} / {targetXP} XP
                 </span>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[9px] text-emerald-400/90 font-mono bg-emerald-950/60 border border-emerald-500/30 px-1.5 py-0.5 rounded-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>AUTO-SAVED</span>
+                </span>
                 {xp >= targetXP && (
                   <span className="bg-gradient-to-r from-amber-300 to-yellow-200 text-black text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-[0_0_10px_rgba(251,191,36,0.6)] flex items-center gap-1">
                     <Crown className="w-2.5 h-2.5" />
@@ -129,6 +147,29 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
 
               {/* Fancy Glass Buttons */}
               <div className="flex items-center gap-1.5">
+                {/* Save Progress Button */}
+                <button
+                  onClick={handleSaveClick}
+                  className={`px-2.5 py-1.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-1 text-[11px] font-mono font-bold ${
+                    justSaved
+                      ? 'bg-emerald-950/80 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.5)] scale-105'
+                      : 'bg-pink-950/70 border-pink-500/40 text-pink-200 hover:bg-pink-900 hover:border-pink-300'
+                  }`}
+                  title="Save your current XP and progress before quitting"
+                >
+                  {justSaved ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>SAVED!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-3.5 h-3.5 text-pink-400" />
+                      <span className="hidden sm:inline">SAVE XP</span>
+                    </>
+                  )}
+                </button>
+
                 <button
                   onClick={handleToggleSound}
                   className={`p-2 rounded-2xl border transition-all cursor-pointer ${
@@ -177,3 +218,4 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
     </header>
   );
 };
+

@@ -6,13 +6,15 @@ import { ArrowLeft, Sparkles, Heart, Plus, X, Filter } from 'lucide-react';
 
 interface MemoryGalleryProps {
   memories: MemoryItem[];
+  visitedMemories?: string[];
   onBack: () => void;
   onAddMemory: (memory: MemoryItem) => void;
-  onGainXP: (amount: number) => void;
+  onGainXP: (amount: number, memoryId?: string) => void;
 }
 
 export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
   memories,
+  visitedMemories = [],
   onBack,
   onAddMemory,
   onGainXP,
@@ -21,7 +23,9 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
   const [filterTag, setFilterTag] = useState<string>('All');
   const [photoFilter, setPhotoFilter] = useState<'normal' | 'rose' | 'golden' | 'cyber'>('rose');
   const [isAdding, setIsAdding] = useState(false);
-  const [inspectedIds, setInspectedIds] = useState<string[]>([]);
+  const [localInspected, setLocalInspected] = useState<string[]>(visitedMemories);
+
+  const allInspected = Array.from(new Set([...visitedMemories, ...localInspected]));
 
   // Add memory form state
   const [newTitle, setNewTitle] = useState('');
@@ -38,9 +42,9 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
   const handleCardClick = (mem: MemoryItem) => {
     sound.playHeartCatch();
     setSelectedMemory(mem);
-    if (!inspectedIds.includes(mem.id)) {
-      setInspectedIds((prev) => [...prev, mem.id]);
-      onGainXP(5);
+    if (!allInspected.includes(mem.id)) {
+      setLocalInspected(prev => [...prev, mem.id]);
+      onGainXP(5, mem.id);
     }
   };
 
@@ -168,7 +172,7 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
       {/* Polaroid Masonry / Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 pb-8">
         {filteredMemories.map((mem, idx) => {
-          const isInspected = inspectedIds.includes(mem.id);
+          const isInspected = allInspected.includes(mem.id);
           return (
             <motion.div
               key={mem.id}

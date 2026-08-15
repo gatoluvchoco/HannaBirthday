@@ -52,11 +52,14 @@ export interface UserProgress {
   xp: number;
   visitedSections: string[];
   interactedObjects: string[];
+  visitedStoryEvents?: string[];
+  visitedMemories?: string[];
   gamesWon: string[];
   letterOpened: boolean;
   candlesBlown: boolean;
   redeemedCoupons: string[];
   easterEggFound: boolean;
+  lastSaved?: number;
 }
 
 export type ActiveSection = 

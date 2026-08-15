@@ -102,11 +102,11 @@ export const HeartCatcherGame: React.FC<HeartCatcherGameProps> = ({ onBack, onWi
       const newItem: FallingItem = {
         id: Date.now() + Math.random(),
         x: xPos,
-        y: -10,
+        y: -30,
         speed: 2.2 + Math.random() * 2.0,
         type,
         icon,
-        points,
+        points
       };
 
       setItems(prev => [...prev, newItem]);
@@ -114,6 +114,9 @@ export const HeartCatcherGame: React.FC<HeartCatcherGameProps> = ({ onBack, onWi
 
     // Physics Animation Step
     const physicsInterval = window.setInterval(() => {
+      let caughtGlitch = false;
+      let caughtGoodItem: FallingItem | null = null;
+
       setItems(prev => {
         const nextList: FallingItem[] = [];
         const catchZoneTop = GAME_HEIGHT - 65;
@@ -129,41 +132,10 @@ export const HeartCatcherGame: React.FC<HeartCatcherGameProps> = ({ onBack, onWi
             const basketRight = basketX + BASKET_WIDTH;
 
             if (itemCenter >= basketLeft - 4 && itemCenter <= basketRight + 4) {
-              // Item caught!
               if (item.type === 'glitch') {
-                sound.playPop();
-                setLives(l => {
-                  const remaining = l - 1;
-                  if (remaining <= 0) {
-                    setGameOver(true);
-                  }
-                  return Math.max(0, remaining);
-                });
-                addScorePopup(item.x, item.y, '-1 💔', '#f87171');
+                caughtGlitch = true;
               } else {
-                sound.playHeartCatch();
-                setBasketSparkle(true);
-                setTimeout(() => setBasketSparkle(false), 250);
-
-                const pointText = item.points > 1 ? `+${item.points} ${item.icon}` : '+1 💖';
-                const color = item.type === 'gold' ? '#fbbf24' : item.type === 'rose' ? '#f472b6' : '#fda4af';
-                addScorePopup(item.x, item.y, pointText, color);
-
-                setScore(s => {
-                  const newScore = s + item.points;
-                  if (newScore >= targetScore && !gameWon) {
-                    setGameWon(true);
-                    sound.playLevelUp();
-                    confetti({
-                      particleCount: 100,
-                      spread: 80,
-                      origin: { y: 0.6 },
-                      colors: ['#f472b6', '#fbbf24', '#ffffff', '#fda4af', '#e879f9']
-                    });
-                    onWin(newScore);
-                  }
-                  return newScore;
-                });
+                caughtGoodItem = item;
               }
               continue; // remove item from falling list
             }
@@ -176,6 +148,46 @@ export const HeartCatcherGame: React.FC<HeartCatcherGameProps> = ({ onBack, onWi
         }
         return nextList;
       });
+
+      // Handle collisions cleanly outside setItems updater
+      if (caughtGlitch) {
+        sound.playPop();
+        setLives(l => {
+          const remaining = l - 1;
+          if (remaining <= 0) {
+            setGameOver(true);
+          }
+          return Math.max(0, remaining);
+        });
+        addScorePopup(basketX + BASKET_WIDTH / 2, GAME_HEIGHT - 60, '-1 💔', '#f87171');
+      } else if (caughtGoodItem) {
+        const item: FallingItem = caughtGoodItem;
+        sound.playHeartCatch();
+        setBasketSparkle(true);
+        setTimeout(() => setBasketSparkle(false), 250);
+
+        const pointText = item.points > 1 ? `+${item.points} ${item.icon}` : '+1 💖';
+        const color = item.type === 'gold' ? '#fbbf24' : item.type === 'rose' ? '#f472b6' : '#fda4af';
+        addScorePopup(item.x, item.y, pointText, color);
+
+        setScore(s => {
+          const newScore = s + item.points;
+          if (newScore >= targetScore && !gameWon) {
+            setGameWon(true);
+            sound.playLevelUp();
+            confetti({
+              particleCount: 100,
+              spread: 80,
+              origin: { y: 0.6 },
+              colors: ['#f472b6', '#fbbf24', '#ffffff', '#fda4af', '#e879f9']
+            });
+            setTimeout(() => {
+              onWin(newScore);
+            }, 10);
+          }
+          return newScore;
+        });
+      }
     }, 28);
 
     return () => {

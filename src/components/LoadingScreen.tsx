@@ -7,12 +7,16 @@ interface LoadingScreenProps {
   onStart: () => void;
   girlfriendName: string;
   level: number;
+  savedXP?: number;
+  targetXP?: number;
 }
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   onStart,
   girlfriendName,
   level,
+  savedXP = 0,
+  targetXP = 100,
 }) => {
   const [progress, setProgress] = useState(0);
   const [statusIndex, setStatusIndex] = useState(0);
@@ -23,7 +27,9 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
   const statusMessages = [
     `Initializing ${girlfriendName.toUpperCase()}.EXE royal chamber...`,
-    "Gathering starlight, pink peonies, and sweet memories...",
+    savedXP > 0 
+      ? `Restoring saved player progress (${savedXP} / ${targetXP} XP)...`
+      : "Gathering starlight, pink peonies, and sweet memories...",
     "Polishing the custom rose-gold Porsche GT3 RS...",
     "Connecting live telemetry to Birmingham UK (BST)...",
     "Synthesizing romantic lo-fi starlight frequencies...",
@@ -140,6 +146,13 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
         {/* Start Button */}
         <div className="mt-6 flex flex-col items-center gap-3">
+          {savedXP > 0 && (
+            <div className="text-[11px] font-mono text-amber-300 bg-amber-950/70 border border-amber-400/40 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+              <Sparkles className="w-3 h-3 text-amber-300" />
+              <span>SAVED PROGRESS DETECTED: {savedXP} / {targetXP} XP</span>
+            </div>
+          )}
+
           {isLoaded ? (
             <motion.button
               onClick={handleStart}
@@ -149,7 +162,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
               className="w-full py-4 px-6 bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200 text-[#1f051c] font-serif-fancy font-black text-base rounded-2xl shadow-[0_0_30px_rgba(244,114,182,0.6)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer"
             >
               <span>👑</span>
-              <span>ENTER THE SANCTUARY</span>
+              <span>{savedXP > 0 ? `CONTINUE ADVENTURE (${savedXP} XP)` : 'ENTER THE SANCTUARY'}</span>
               <Heart className="w-5 h-5 fill-rose-600 text-rose-600 animate-ping" />
             </motion.button>
           ) : (
