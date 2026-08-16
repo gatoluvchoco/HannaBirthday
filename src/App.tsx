@@ -309,6 +309,7 @@ export default function App() {
       {activeSection === 'loading' ? (
         <LoadingScreen
           onStart={() => navigateTo('main-menu')}
+          onResetProgress={handleResetProgress}
           girlfriendName={config.girlfriendName}
           level={config.level}
           savedXP={progress.xp}

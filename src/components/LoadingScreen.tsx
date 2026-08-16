@@ -5,6 +5,7 @@ import { Heart, Sparkles, Crown, Play, Gift } from 'lucide-react';
 
 interface LoadingScreenProps {
   onStart: () => void;
+  onResetProgress?: () => void;
   girlfriendName: string;
   level: number;
   savedXP?: number;
@@ -13,6 +14,7 @@ interface LoadingScreenProps {
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   onStart,
+  onResetProgress,
   girlfriendName,
   level,
   savedXP = 0,
@@ -26,7 +28,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   const ordinal = level === 23 ? '23RD' : level === 21 ? '21ST' : level === 22 ? '22ND' : `${level}TH`;
 
   const statusMessages = [
-    `Initializing ${girlfriendName.toUpperCase()}.EXE royal chamber...`,
+    `Initializing ${girlfriendName}'s royal chamber...`,
     savedXP > 0 
       ? `Restoring saved player progress (${savedXP} / ${targetXP} XP)...`
       : "Gathering starlight, pink peonies, and sweet memories...",
@@ -89,7 +91,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
             <div className="w-3 h-3 rounded-full bg-emerald-400" />
             <span className="font-mono text-xs text-pink-300 ml-2 tracking-widest font-semibold flex items-center gap-1">
               <span>🎀</span>
-              <span>PRINCESS_BOOT // {girlfriendName.toUpperCase()}_v{level}.0</span>
+              <span>PRINCESS_BOOT // {girlfriendName.toUpperCase()} &bull; LEVEL {level}</span>
             </span>
           </div>
           <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
@@ -105,7 +107,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
           <motion.h1 
             className="font-serif-fancy text-3xl sm:text-4xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-pink-200 via-rose-100 to-amber-200 drop-shadow-md mb-1"
           >
-            {girlfriendName.toUpperCase()}.EXE
+            {girlfriendName}
           </motion.h1>
           <div className="font-script text-xl text-pink-300">
             Level {level} Birthday Coronation
@@ -144,12 +146,27 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
           <div className="animate-pulse text-pink-400 text-xs mt-0.5">_</div>
         </div>
 
-        {/* Start Button */}
+        {/* Start Button & Saved Progress Handling */}
         <div className="mt-6 flex flex-col items-center gap-3">
           {savedXP > 0 && (
-            <div className="text-[11px] font-mono text-amber-300 bg-amber-950/70 border border-amber-400/40 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-              <Sparkles className="w-3 h-3 text-amber-300" />
-              <span>SAVED PROGRESS DETECTED: {savedXP} / {targetXP} XP</span>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <div className="text-[11px] font-mono text-amber-300 bg-amber-950/70 border border-amber-400/40 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>SAVED PROGRESS DETECTED: {savedXP} / {targetXP} XP</span>
+              </div>
+              {onResetProgress && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    sound.playClick();
+                    onResetProgress();
+                  }}
+                  className="text-[11px] font-mono text-pink-300 hover:text-white bg-pink-950/80 border border-pink-500/40 px-2.5 py-1 rounded-full hover:bg-pink-900 transition-colors cursor-pointer"
+                  title="Reset to 0 XP and start fresh"
+                >
+                  ↺ Start at 0 XP
+                </button>
+              )}
             </div>
           )}
 
