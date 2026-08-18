@@ -204,10 +204,10 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-serif-fancy font-bold text-white group-hover:text-pink-200 transition-colors leading-tight">
-              The Golden Hour & Sunset Dreams
+              The Golden Hours
             </h2>
             <p className="text-pink-100/75 text-xs sm:text-sm leading-relaxed mt-2.5 font-sans">
-              October 14th • Sunset Pier. The ocean breeze, your contagious laughter, and that exact second I realized you were the one I wanted forever.
+              That magical time of day when the sun melts into warm amber skies, everything softens in gentle glowing light, and every quiet second together feels completely timeless and warm.
             </p>
           </div>
 
