@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ActiveSection, UserProgress } from '../types';
 import { sound } from '../utils/audio';
 import { 

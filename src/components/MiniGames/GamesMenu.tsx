@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { sound } from '../../utils/audio';
 import { GameType } from '../../types';
+import { DEFAULT_CONFIG } from '../../utils/storage';
 import { HeartCatcherGame } from './HeartCatcherGame';
 import { MemoryMatchGame } from './MemoryMatchGame';
 import { StarHuntGame } from './StarHuntGame';
@@ -12,8 +13,10 @@ import { ArrowLeft, Sparkles, Trophy, CheckCircle, Crown } from 'lucide-react';
 interface GamesMenuProps {
   girlfriendName: string;
   onBack: () => void;
-  onWinGame: (gameId: string, xpReward: number) => void;
+  onWinGame: (gameId: string, xpReward: number, score?: number, bestTime?: number) => void;
   gamesWon: string[];
+  gameHighScores?: Record<string, number>;
+  gameBestTimes?: Record<string, number>;
 }
 
 export const GamesMenu: React.FC<GamesMenuProps> = ({
@@ -21,6 +24,8 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
   onBack,
   onWinGame,
   gamesWon,
+  gameHighScores = {},
+  gameBestTimes = {},
 }) => {
   const [activeGame, setActiveGame] = useState<GameType | null>(null);
 
@@ -28,37 +33,42 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
     {
       id: 'catch',
       title: '💖 Princess Heart Catcher',
-      desc: 'Catch falling strawberry love hearts in your royal basket (+20 XP).',
+      desc: 'Catch falling hearts, crowns & roses to reach 100 points (+20 XP).',
       icon: '🧺',
       xp: '+20 XP',
+      bestStat: gameHighScores['catch'] ? `Best: ${gameHighScores['catch']} 💖` : null,
     },
     {
       id: 'match',
       title: '🌸 Sweet Memory Match',
-      desc: 'Flip and pair cute romantic icons (Porsche, roses, teddy & matcha) (+20 XP).',
+      desc: 'Flip and pair 20 boxes (10 romantic couple icon pairs) (+20 XP).',
       icon: '🎴',
       xp: '+20 XP',
+      bestStat: gameBestTimes['match'] ? `Best: ${gameBestTimes['match']} moves` : null,
     },
     {
       id: 'hunt',
       title: '✨ Diamond Starfall Hunt',
-      desc: 'Spot and collect 10 glowing diamond stars hidden in the galaxy (+20 XP).',
+      desc: 'Spot and collect 30 glowing diamond stars while dodging comets (+20 XP).',
       icon: '💎',
       xp: '+20 XP',
+      bestStat: gameBestTimes['hunt'] ? `Record: ${gameBestTimes['hunt']}s left` : null,
     },
     {
       id: 'pop',
       title: '🎈 Pastel Birthday Balloon Pop',
-      desc: 'Pop 15 floating pastel birthday balloons before time runs out (+20 XP).',
+      desc: 'Pop 100 floating pastel birthday balloons before time runs out (+20 XP).',
       icon: '🎈',
       xp: '+20 XP',
+      bestStat: gameHighScores['pop'] ? `Best: ${gameHighScores['pop']} 🎈` : null,
     },
     {
       id: 'trivia',
-      title: '👑 Romantic Couple Trivia',
-      desc: 'Test your knowledge about our inside jokes, dates, and memories (+20 XP).',
+      title: '👑 Romantic & Master Trivia',
+      desc: '30 questions across 6 rounds, ending with Impossible Mode (+50 XP each)!',
       icon: '🎀',
-      xp: '+20 XP',
+      xp: 'Up to +375 XP',
+      bestStat: gameHighScores['trivia'] !== undefined ? `Best: ${gameHighScores['trivia']}/30 ⭐` : null,
     },
   ];
 
@@ -67,16 +77,17 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
     setActiveGame(id as GameType);
   };
 
-  const handleGameVictory = (gameId: string, xp: number) => {
+  const handleGameVictory = (gameId: string, xp: number, score?: number, bestTime?: number) => {
     sound.playLevelUp();
-    onWinGame(gameId, xp);
+    onWinGame(gameId, xp, score, bestTime);
   };
 
   if (activeGame === 'catch') {
     return (
       <HeartCatcherGame
+        highScore={gameHighScores['catch'] || 0}
         onBack={() => setActiveGame(null)}
-        onWin={() => handleGameVictory('catch', 20)}
+        onWin={(score) => handleGameVictory('catch', 20, score)}
       />
     );
   }
@@ -84,8 +95,9 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
   if (activeGame === 'match') {
     return (
       <MemoryMatchGame
+        bestMoves={gameBestTimes['match'] || 0}
         onBack={() => setActiveGame(null)}
-        onWin={() => handleGameVictory('match', 20)}
+        onWin={(moves) => handleGameVictory('match', 20, undefined, moves)}
       />
     );
   }
@@ -93,8 +105,9 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
   if (activeGame === 'hunt') {
     return (
       <StarHuntGame
+        bestTime={gameBestTimes['hunt'] || 0}
         onBack={() => setActiveGame(null)}
-        onWin={() => handleGameVictory('hunt', 20)}
+        onWin={(timeLeft) => handleGameVictory('hunt', 20, undefined, timeLeft)}
       />
     );
   }
@@ -102,8 +115,9 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
   if (activeGame === 'pop') {
     return (
       <BalloonPopGame
+        highScore={gameHighScores['pop'] || 0}
         onBack={() => setActiveGame(null)}
-        onWin={() => handleGameVictory('pop', 20)}
+        onWin={(score) => handleGameVictory('pop', 20, score)}
       />
     );
   }
@@ -112,8 +126,10 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
     return (
       <LoveTriviaGame
         girlfriendName={girlfriendName}
+        trivia={DEFAULT_CONFIG.trivia}
+        bestScore={gameHighScores['trivia'] || 0}
         onBack={() => setActiveGame(null)}
-        onWin={() => handleGameVictory('trivia', 20)}
+        onWin={(score) => handleGameVictory('trivia', 50, score)}
       />
     );
   }
@@ -186,13 +202,19 @@ export const GamesMenu: React.FC<GamesMenuProps> = ({
                 <h3 className="text-base font-serif-fancy font-bold text-white group-hover:text-pink-200 mb-1.5 transition-colors">
                   {game.title}
                 </h3>
-                <p className="font-sans text-xs text-pink-100/75 leading-relaxed">
+                <p className="font-sans text-xs text-pink-100/75 leading-relaxed mb-2">
                   {game.desc}
                 </p>
+                {game.bestStat && (
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-pink-950/80 border border-pink-400/30 text-[10px] font-mono text-amber-300 font-bold">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    <span>{game.bestStat}</span>
+                  </div>
+                )}
               </div>
 
               <div className="mt-4 pt-3 border-t border-pink-900/40 flex items-center justify-between text-xs font-mono text-pink-300 group-hover:text-white font-bold">
-                <span>START CHALLENGE</span>
+                <span>{isCleared ? 'PLAY AGAIN (BONUS XP)' : 'START CHALLENGE'}</span>
                 <span>▶</span>
               </div>
             </motion.button>

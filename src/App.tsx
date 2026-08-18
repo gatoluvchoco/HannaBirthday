@@ -421,18 +421,38 @@ export default function App() {
               <GamesMenu
                 girlfriendName={config.girlfriendName}
                 onBack={() => navigateTo('main-menu')}
-                onWinGame={(gameId, xp) => {
+                onWinGame={(gameId, xp, score, bestTime) => {
                   addXP(xp, `Cleared ${gameId} Mini-Game!`);
                   setProgress(p => {
-                    const updated = {
+                    const nextWon = p.gamesWon.includes(gameId) ? p.gamesWon : [...p.gamesWon, gameId];
+                    const nextHighScores = { ...(p.gameHighScores || {}) };
+                    if (typeof score === 'number') {
+                      const cur = nextHighScores[gameId] || 0;
+                      if (score > cur) {
+                        nextHighScores[gameId] = score;
+                      }
+                    }
+                    const nextBestTimes = { ...(p.gameBestTimes || {}) };
+                    if (typeof bestTime === 'number') {
+                      const curTime = nextBestTimes[gameId];
+                      if (curTime === undefined || bestTime < curTime || (gameId === 'hunt' && bestTime > curTime)) {
+                        nextBestTimes[gameId] = bestTime;
+                      }
+                    }
+                    const updated: UserProgress = {
                       ...p,
-                      gamesWon: p.gamesWon.includes(gameId) ? p.gamesWon : [...p.gamesWon, gameId]
+                      gamesWon: nextWon,
+                      gameHighScores: nextHighScores,
+                      gameBestTimes: nextBestTimes,
+                      lastSaved: Date.now(),
                     };
                     saveStoredProgress(updated);
                     return updated;
                   });
                 }}
                 gamesWon={progress.gamesWon}
+                gameHighScores={progress.gameHighScores || {}}
+                gameBestTimes={progress.gameBestTimes || {}}
               />
             )}
 

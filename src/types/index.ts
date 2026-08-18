@@ -55,6 +55,8 @@ export interface UserProgress {
   visitedStoryEvents?: string[];
   visitedMemories?: string[];
   gamesWon: string[];
+  gameHighScores?: Record<string, number>;
+  gameBestTimes?: Record<string, number>;
   letterOpened: boolean;
   candlesBlown: boolean;
   redeemedCoupons: string[];
