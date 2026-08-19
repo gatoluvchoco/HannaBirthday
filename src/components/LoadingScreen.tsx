@@ -363,21 +363,6 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
               </div>
             )}
           </div>
-
-          {/* Princess Bypass shortcut if she wants to skip teasing after 5 dodges */}
-          {isLoaded && !isUnlocked && dodgeCount >= 5 && (
-            <button
-              type="button"
-              onClick={() => {
-                sound.playClick();
-                setCountdown(0);
-                setIsUnlocked(true);
-              }}
-              className="text-[10px] font-mono text-pink-400 hover:text-pink-200 underline decoration-dotted cursor-pointer transition-colors"
-            >
-              (Princess bypass: surrender button now 💖)
-            </button>
-          )}
         </div>
 
         {/* Footer info */}

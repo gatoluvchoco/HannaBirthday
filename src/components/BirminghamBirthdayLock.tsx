@@ -39,7 +39,6 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
   isBypassed = false,
 }) => {
   const [timeStatus, setTimeStatus] = useState<TimezoneStatus>(getTimezoneCountdown());
-  const [simulatedUnlock, setSimulatedUnlock] = useState(false);
   const [heartPings, setHeartPings] = useState(0);
   const [activeTeaserIndex, setActiveTeaserIndex] = useState<number | null>(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -79,8 +78,8 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
       icon: "🎟️"
     },
     {
-      title: "Teaser #6: Birmingham to Malaysia Distance 🌍",
-      detail: "Even with 6,700+ miles between Birmingham (BST) and Malaysia (MYT), every heartbeat bridges the distance directly to you.",
+      title: "Teaser #6: Birmingham to Keningau Distance 🌍",
+      detail: "Even with 7,000+ miles between Birmingham (BST) and Keningau, Sabah (MYT), every heartbeat bridges the distance directly to you.",
       tag: "ETERNAL LOVE",
       icon: "✨"
     }
@@ -117,13 +116,13 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
       const updated = getTimezoneCountdown();
       setTimeStatus(updated);
 
-      if (updated.isUnlocked && !simulatedUnlock) {
+      if (updated.isUnlocked && !timeStatus.isUnlocked) {
         handleTriggerMidnightFanfare();
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [simulatedUnlock]);
+  }, []);
 
   const handleTriggerMidnightFanfare = () => {
     sound.playLevelUp();
@@ -202,7 +201,7 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
     }
   };
 
-  const isActuallyUnlocked = timeStatus.isUnlocked || simulatedUnlock || isBypassed;
+  const isActuallyUnlocked = timeStatus.isUnlocked || isBypassed;
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 z-20 relative select-none">
@@ -284,12 +283,12 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
             </div>
           </div>
 
-          {/* Kuala Lumpur Clock (Afiq's Location) */}
+          {/* Keningau Clock (Afiq's Location) */}
           <div className="bg-[#140618]/90 border border-purple-500/30 rounded-2xl p-3.5 shadow-md flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs font-mono mb-1">
               <span className="flex items-center gap-1.5 text-purple-200 font-bold">
                 <span>🇲🇾</span>
-                <span>KUALA LUMPUR (AFIQ)</span>
+                <span>KENINGAU (AFIQ)</span>
               </span>
               <span className="text-[10px] text-purple-400 bg-purple-950/80 px-2 py-0.5 rounded-full border border-purple-800/40">
                 MYT (UTC+8)
@@ -495,7 +494,7 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
           {/* Interactive Heart Ping Button to Afiq */}
           <div className="mt-4 pt-3 border-t border-pink-500/20 flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-sans text-pink-200">
-              <span>Send love waves to Malaysia: </span>
+              <span>Send love waves to Keningau: </span>
               <strong className="text-amber-300 font-mono font-bold">{heartPings}</strong>
               <span className="text-pink-300 text-[11px] ml-1">hearts dispatched!</span>
             </div>
@@ -510,23 +509,9 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
           </div>
         </div>
 
-        {/* Footer Testing Controls & Simulator */}
-        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-pink-300/60 pt-2 border-t border-pink-900/40 relative z-10">
+        {/* Footer */}
+        <div className="flex flex-wrap items-center justify-center text-center gap-2 text-[11px] font-mono text-pink-300/60 pt-2 border-t border-pink-900/40 relative z-10">
           <span>Crafted with love for Hanna by Afiq &bull; Birmingham BST Protocol</span>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                sound.playSparkle();
-                setSimulatedUnlock(prev => !prev);
-                if (!simulatedUnlock) handleTriggerMidnightFanfare();
-              }}
-              className="text-pink-400 hover:text-pink-200 underline decoration-dotted cursor-pointer transition-colors"
-              title="Test the 12:00 AM unlock experience"
-            >
-              {simulatedUnlock ? "↺ Re-lock Timer" : "⚡ Preview 12:00 AM Unlock"}
-            </button>
-          </div>
         </div>
       </motion.div>
     </div>
