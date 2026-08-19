@@ -16,16 +16,20 @@
     
     <!-- Single Page App GitHub Pages Routing Script -->
     <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
+      try {
+        (function(l) {
+          if (l.search && l.search.charAt(1) === '/') {
+            var decoded = l.search.slice(1).split('&').map(function(s) { 
+              return s.replace(/~and~/g, '&');
+            }).join('?');
+            window.history.replaceState(null, null,
+                l.pathname.slice(0, -1) + decoded + l.hash
+            );
+          }
+        }(window.location));
+      } catch (e) {
+        console.warn("SPA router notice:", e);
+      }
     </script>
   </head>
   <body class="bg-[#070b09] text-[#fdf2f8] select-none antialiased overflow-x-hidden touch-manipulation">
