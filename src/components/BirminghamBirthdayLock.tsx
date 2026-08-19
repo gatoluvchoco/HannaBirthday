@@ -86,6 +86,31 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
     }
   ];
 
+  // Auto-play Godspeed by Frank Ocean on mount
+  useEffect(() => {
+    sound.playGodspeed();
+    setIsMusicPlaying(sound.isPlayingBGM());
+
+    // Autoplay fallback for mobile/browsers requiring first gesture
+    const handleFirstGesture = () => {
+      sound.resumeContext();
+      if (!sound.isPlayingBGM()) {
+        sound.playGodspeed();
+      }
+      setIsMusicPlaying(sound.isPlayingBGM());
+    };
+
+    window.addEventListener('click', handleFirstGesture, { once: true });
+    window.addEventListener('touchstart', handleFirstGesture, { once: true });
+    window.addEventListener('keydown', handleFirstGesture, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+    };
+  }, []);
+
   // Update timer every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -221,15 +246,15 @@ export const BirminghamBirthdayLock: React.FC<BirminghamBirthdayLockProps> = ({
             {/* Music Jukebox Toggle */}
             <button
               onClick={handleToggleMusic}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono border transition-all cursor-pointer ${
                 isMusicPlaying 
                   ? 'bg-pink-500/30 text-pink-200 border-pink-400 shadow-[0_0_12px_rgba(244,114,182,0.4)]' 
                   : 'bg-black/40 text-pink-300/70 border-pink-800/40 hover:text-pink-200'
               }`}
-              title="Play Waiting Soundtrack"
+              title="Play Frank Ocean - Godspeed"
             >
               {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
-              <span>{isMusicPlaying ? 'MUSIC: PLAYING 🎵' : 'PLAY BGM 🎵'}</span>
+              <span>{isMusicPlaying ? 'GODSPEED - FRANK OCEAN 🎵' : 'PLAY GODSPEED 🎵'}</span>
             </button>
           </div>
         </div>

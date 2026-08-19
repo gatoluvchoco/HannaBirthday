@@ -302,9 +302,28 @@ class SoundEngine {
   }
 
   // Romantic Retro Synthesizer BGM Tracks
-  public startBGM(trackIndex: number = 0) {
+  public playGodspeed() {
+    this.startBGM('godspeed');
+  }
+
+  public playHappyBirthday() {
+    this.startBGM('happyBirthday');
+  }
+
+  public startBGM(track: 'godspeed' | 'happyBirthday' | number = 'godspeed') {
     this.initContext();
-    this.currentTrack = trackIndex;
+
+    // Determine target track name
+    let trackName: 'godspeed' | 'happyBirthday' = 'godspeed';
+    if (typeof track === 'string') {
+      trackName = track;
+    } else if (track === 1) {
+      trackName = 'happyBirthday';
+    } else {
+      trackName = 'godspeed';
+    }
+
+    this.currentTrack = trackName === 'happyBirthday' ? 1 : 0;
 
     if (this.customAudioUrl) {
       if (!this.customAudio) {
@@ -318,46 +337,126 @@ class SoundEngine {
       return;
     }
 
-    if (this.bgmPlaying) return;
+    // Stop current track before switching
+    if (this.bgmInterval) {
+      clearTimeout(this.bgmInterval);
+      this.bgmInterval = null;
+    }
     this.bgmPlaying = true;
 
-    // Dedicated "Happy Birthday to You" Retro Synthesizer Theme
-    const happyBirthdayMelody = [
-      // "Happy Birthday to you" (C C D C F E)
-      { note: 261.63, dur: 0.35 }, // C4 (Hap-)
-      { note: 261.63, dur: 0.35 }, // C4 (-py)
-      { note: 293.66, dur: 0.70 }, // D4 (Birth-)
-      { note: 261.63, dur: 0.70 }, // C4 (-day)
-      { note: 349.23, dur: 0.70 }, // F4 (to)
-      { note: 329.63, dur: 1.20 }, // E4 (you)
+    // Dedicated "Godspeed by Frank Ocean" Soulful Synthesizer Theme
+    const godspeedMelody = [
+      // "I will always love you" (C4 -> F4 -> G4 -> A4 -> G4 -> F4 -> D4)
+      { note: 261.63, dur: 0.45, chord: 174.61 }, // C4 (I) + F3 bass
+      { note: 349.23, dur: 0.40 }, // F4 (will)
+      { note: 392.00, dur: 0.40 }, // G4 (al-)
+      { note: 440.00, dur: 0.70 }, // A4 (-ways)
+      { note: 392.00, dur: 0.40 }, // G4 (love)
+      { note: 349.23, dur: 0.60 }, // F4 (you)
+      { note: 293.66, dur: 1.10, chord: 146.83 }, // D4 + D3 bass
 
-      // "Happy Birthday to you" (C C D C G F)
-      { note: 261.63, dur: 0.35 }, // C4 (Hap-)
-      { note: 261.63, dur: 0.35 }, // C4 (-py)
-      { note: 293.66, dur: 0.70 }, // D4 (Birth-)
-      { note: 261.63, dur: 0.70 }, // C4 (-day)
-      { note: 392.00, dur: 0.70 }, // G4 (to)
-      { note: 349.23, dur: 1.20 }, // F4 (you)
+      // "How I do" (F4 -> G4 -> F4)
+      { note: 349.23, dur: 0.50 }, // F4 (how)
+      { note: 392.00, dur: 0.50 }, // G4 (I)
+      { note: 349.23, dur: 1.20, chord: 116.54 }, // F4 (do) + Bb2 bass
 
-      // "Happy Birthday dear Hanna" (C C C5 A F E D)
-      { note: 261.63, dur: 0.35 }, // C4 (Hap-)
-      { note: 261.63, dur: 0.35 }, // C4 (-py)
-      { note: 523.25, dur: 0.70 }, // C5 (Birth-)
-      { note: 440.00, dur: 0.70 }, // A4 (-day)
-      { note: 349.23, dur: 0.70 }, // F4 (dear)
-      { note: 329.63, dur: 0.70 }, // E4 (Han-)
-      { note: 293.66, dur: 1.10 }, // D4 (-na)
+      // "Let go of a claim on you" (F4 -> G4 -> A4 -> C5 -> A4 -> G4 -> F4)
+      { note: 349.23, dur: 0.40 }, // F4 (Let)
+      { note: 392.00, dur: 0.40 }, // G4 (go)
+      { note: 440.00, dur: 0.40 }, // A4 (of)
+      { note: 523.25, dur: 0.60, chord: 130.81 }, // C5 (a claim) + C3 bass
+      { note: 440.00, dur: 0.40 }, // A4 (on)
+      { note: 392.00, dur: 0.40 }, // G4 (you)
+      { note: 349.23, dur: 1.30, chord: 174.61 }, // F4 + F3 bass
 
-      // "Happy Birthday to you" (Bb Bb A F G F)
-      { note: 466.16, dur: 0.35 }, // Bb4 (Hap-)
-      { note: 466.16, dur: 0.35 }, // Bb4 (-py)
-      { note: 440.00, dur: 0.70 }, // A4 (Birth-)
-      { note: 349.23, dur: 0.70 }, // F4 (-day)
-      { note: 392.00, dur: 0.70 }, // G4 (to)
-      { note: 349.23, dur: 1.40 }, // F4 (you!)
+      // "Some nights you dance with tears in your eyes" (F4 -> A4 -> C5 -> D5 -> C5 -> A4 -> G4 -> F4)
+      { note: 349.23, dur: 0.40 }, // F4 (Some)
+      { note: 440.00, dur: 0.40 }, // A4 (nights)
+      { note: 523.25, dur: 0.50, chord: 146.83 }, // C5 (you) + D3 bass
+      { note: 587.33, dur: 0.50 }, // D5 (dance)
+      { note: 523.25, dur: 0.50 }, // C5 (with)
+      { note: 440.00, dur: 0.50 }, // A4 (tears)
+      { note: 392.00, dur: 0.40 }, // G4 (in your)
+      { note: 349.23, dur: 1.10, chord: 116.54 }, // F4 (eyes) + Bb2 bass
+
+      // "Boy, it's okay to cry" (A4 -> G4 -> F4 -> D4 -> C4)
+      { note: 440.00, dur: 0.50 }, // A4 (Boy)
+      { note: 392.00, dur: 0.40 }, // G4 (it's)
+      { note: 349.23, dur: 0.50 }, // F4 (o-)
+      { note: 293.66, dur: 0.50 }, // D4 (-kay)
+      { note: 261.63, dur: 1.30, chord: 130.81 }, // C4 (to cry) + C3 bass
+
+      // "Just remember I will always want you to have"
+      { note: 261.63, dur: 0.35 }, // C4 (Just)
+      { note: 293.66, dur: 0.35 }, // D4 (re-)
+      { note: 349.23, dur: 0.35, chord: 174.61 }, // F4 (-mem-) + F3 bass
+      { note: 392.00, dur: 0.35 }, // G4 (-ber)
+      { note: 440.00, dur: 0.45 }, // A4 (I will)
+      { note: 523.25, dur: 0.55 }, // C5 (al-ways)
+      { note: 440.00, dur: 0.40 }, // A4 (want you)
+      { note: 392.00, dur: 0.50 }, // G4 (to have)
+
+      // "The good things" (G4 -> F4 -> F4)
+      { note: 392.00, dur: 0.45 }, // G4 (the)
+      { note: 349.23, dur: 0.60 }, // F4 (good)
+      { note: 349.23, dur: 1.40, chord: 116.54 }, // F4 (things) + Bb2 bass
+
+      // "Wishing you Godspeed, glory" (F4 -> A4 -> C5 -> F5 -> E5 -> D5 -> C5)
+      { note: 349.23, dur: 0.40 }, // F4 (Wish-)
+      { note: 440.00, dur: 0.40 }, // A4 (-ing)
+      { note: 523.25, dur: 0.50, chord: 174.61 }, // C5 (you) + F3 bass
+      { note: 698.46, dur: 0.80 }, // F5 (God-)
+      { note: 659.25, dur: 0.50 }, // E5 (-speed)
+      { note: 587.33, dur: 0.60, chord: 146.83 }, // D5 (glo-) + D3 bass
+      { note: 523.25, dur: 1.50, chord: 174.61 }, // C5 (-ry) + F3 bass
+
+      // "Still, I'll always be there for you"
+      { note: 349.23, dur: 0.45 }, // F4 (Still)
+      { note: 392.00, dur: 0.40 }, // G4 (I'll)
+      { note: 440.00, dur: 0.50 }, // A4 (al-)
+      { note: 523.25, dur: 0.60, chord: 116.54 }, // C5 (-ways) + Bb2 bass
+      { note: 440.00, dur: 0.40 }, // A4 (be there)
+      { note: 392.00, dur: 0.40 }, // G4 (for)
+      { note: 349.23, dur: 1.60, chord: 174.61 }, // F4 (you) + F3 bass
     ];
 
-    const currentMelody = happyBirthdayMelody;
+    // Dedicated "Happy Birthday to You" Retro Arcade Celebration Theme
+    const happyBirthdayMelody = [
+      // "Happy Birthday to you" (C C D C F E)
+      { note: 261.63, dur: 0.35, chord: 130.81 }, // C4 + C3 bass
+      { note: 261.63, dur: 0.35 },
+      { note: 293.66, dur: 0.70 },
+      { note: 261.63, dur: 0.70 },
+      { note: 349.23, dur: 0.70, chord: 174.61 }, // F4 + F3 bass
+      { note: 329.63, dur: 1.20 },
+
+      // "Happy Birthday to you" (C C D C G F)
+      { note: 261.63, dur: 0.35, chord: 130.81 },
+      { note: 261.63, dur: 0.35 },
+      { note: 293.66, dur: 0.70 },
+      { note: 261.63, dur: 0.70 },
+      { note: 392.00, dur: 0.70, chord: 196.00 }, // G4 + G3 bass
+      { note: 349.23, dur: 1.20, chord: 174.61 },
+
+      // "Happy Birthday dear Hanna" (C C C5 A F E D)
+      { note: 261.63, dur: 0.35, chord: 130.81 },
+      { note: 261.63, dur: 0.35 },
+      { note: 523.25, dur: 0.70, chord: 174.61 }, // C5
+      { note: 440.00, dur: 0.70 },
+      { note: 349.23, dur: 0.70 },
+      { note: 329.63, dur: 0.70 },
+      { note: 293.66, dur: 1.10, chord: 146.83 }, // D4
+
+      // "Happy Birthday to you" (Bb Bb A F G F)
+      { note: 466.16, dur: 0.35, chord: 116.54 }, // Bb4
+      { note: 466.16, dur: 0.35 },
+      { note: 440.00, dur: 0.70 },
+      { note: 349.23, dur: 0.70 },
+      { note: 392.00, dur: 0.70, chord: 130.81 },
+      { note: 349.23, dur: 1.50, chord: 174.61 },
+    ];
+
+    const currentMelody = trackName === 'happyBirthday' ? happyBirthdayMelody : godspeedMelody;
     let step = 0;
 
     const playNextNote = () => {
@@ -370,36 +469,104 @@ class SoundEngine {
       const item = currentMelody[step % currentMelody.length];
       const now = this.ctx.currentTime;
 
-      // Romantic warm chiptune synthesis (Triangle + soft Sine sub-harmonic)
-      const osc = this.ctx.createOscillator();
-      const subOsc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const subGain = this.ctx.createGain();
+      // Sound design per track
+      if (trackName === 'godspeed') {
+        // Soulful Rhodes / Organ Warm Synthesis (Warm Triangle + Soft Sine Harmonics + Sub Bass)
+        const leadOsc = this.ctx.createOscillator();
+        const sineHarmonic = this.ctx.createOscillator();
+        const leadGain = this.ctx.createGain();
+        const sineGain = this.ctx.createGain();
 
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(item.note, now);
+        leadOsc.type = 'triangle';
+        leadOsc.frequency.setValueAtTime(item.note, now);
 
-      subOsc.type = 'sine';
-      subOsc.frequency.setValueAtTime(item.note / 2, now); // 1 octave lower for warm bass
+        sineHarmonic.type = 'sine';
+        sineHarmonic.frequency.setValueAtTime(item.note * 2, now);
 
-      const noteVol = 0.09 * this.volume;
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(noteVol, now + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur);
+        const noteVol = 0.085 * this.volume;
+        leadGain.gain.setValueAtTime(0.001, now);
+        leadGain.gain.linearRampToValueAtTime(noteVol, now + 0.06);
+        leadGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur * 0.95);
 
-      subGain.gain.setValueAtTime(0.001, now);
-      subGain.gain.linearRampToValueAtTime(noteVol * 0.4, now + 0.04);
-      subGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur);
+        sineGain.gain.setValueAtTime(0.001, now);
+        sineGain.gain.linearRampToValueAtTime(noteVol * 0.25, now + 0.06);
+        sineGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur * 0.95);
 
-      osc.connect(gain);
-      subOsc.connect(subGain);
-      gain.connect(this.ctx.destination);
-      subGain.connect(this.ctx.destination);
+        leadOsc.connect(leadGain);
+        sineHarmonic.connect(sineGain);
+        leadGain.connect(this.ctx.destination);
+        sineGain.connect(this.ctx.destination);
 
-      osc.start(now);
-      subOsc.start(now);
-      osc.stop(now + item.dur);
-      subOsc.stop(now + item.dur);
+        leadOsc.start(now);
+        sineHarmonic.start(now);
+        leadOsc.stop(now + item.dur);
+        sineHarmonic.stop(now + item.dur);
+
+        if (item.chord) {
+          const bassOsc = this.ctx.createOscillator();
+          const bassGain = this.ctx.createGain();
+          bassOsc.type = 'sine';
+          bassOsc.frequency.setValueAtTime(item.chord, now);
+
+          bassGain.gain.setValueAtTime(0.001, now);
+          bassGain.gain.linearRampToValueAtTime(0.05 * this.volume, now + 0.1);
+          bassGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur * 1.8);
+
+          bassOsc.connect(bassGain);
+          bassGain.connect(this.ctx.destination);
+
+          bassOsc.start(now);
+          bassOsc.stop(now + item.dur * 1.8);
+        }
+      } else {
+        // Upbeat, cute chiptune arcade Happy Birthday synth
+        const osc = this.ctx.createOscillator();
+        const subOsc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const subGain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(item.note, now);
+
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(item.note / 2, now);
+
+        const noteVol = 0.09 * this.volume;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(noteVol, now + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur * 0.9);
+
+        subGain.gain.setValueAtTime(0.001, now);
+        subGain.gain.linearRampToValueAtTime(noteVol * 0.35, now + 0.04);
+        subGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur * 0.9);
+
+        osc.connect(gain);
+        subOsc.connect(subGain);
+        gain.connect(this.ctx.destination);
+        subGain.connect(this.ctx.destination);
+
+        osc.start(now);
+        subOsc.start(now);
+        osc.stop(now + item.dur);
+        subOsc.stop(now + item.dur);
+
+        if (item.chord) {
+          const bassOsc = this.ctx.createOscillator();
+          const bassGain = this.ctx.createGain();
+          bassOsc.type = 'sine';
+          bassOsc.frequency.setValueAtTime(item.chord, now);
+
+          bassGain.gain.setValueAtTime(0.001, now);
+          bassGain.gain.linearRampToValueAtTime(0.04 * this.volume, now + 0.05);
+          bassGain.gain.exponentialRampToValueAtTime(0.0001, now + item.dur);
+
+          bassOsc.connect(bassGain);
+          bassGain.connect(this.ctx.destination);
+
+          bassOsc.start(now);
+          bassOsc.stop(now + item.dur);
+        }
+      }
 
       step++;
       const nextDelay = item.dur * 1000;
@@ -407,6 +574,10 @@ class SoundEngine {
     };
 
     playNextNote();
+  }
+
+  public getTrackTitle(): string {
+    return this.currentTrack === 1 ? "Happy Birthday to You 🎂👑" : "Frank Ocean - Godspeed 🕊️🎹";
   }
 
   public stopBGM() {

@@ -112,7 +112,7 @@ export const OurStory: React.FC<OurStoryProps> = ({
       <div className="text-center mb-8 bg-[#140616]/85 border border-pink-500/30 rounded-3xl p-6 sm:p-7 backdrop-blur-xl shadow-[0_8px_30px_rgba(244,114,182,0.15)]">
         <span className="bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200 text-[#1f051c] inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-2 shadow-sm">
           <span>🌸</span>
-          <span>OUR LOVE TIMELINE (2023 - 2026+)</span>
+          <span>OUR LOVE TIMELINE (2024 - 2026+)</span>
         </span>
         <h2 className="text-2xl sm:text-4xl font-serif-fancy font-black text-white">
           CHAPTERS OF US

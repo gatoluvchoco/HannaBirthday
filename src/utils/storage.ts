@@ -10,10 +10,10 @@ export const DEFAULT_CONFIG: AppConfig = {
   birthdayDate: "2003-03-24", // Hanna's Birthday
   level: 23, // Princess Hanna's Level 23 Birthday
   targetXP: 250,
-  musicTitle: "Happy Birthday",
+  musicTitle: "Frank Ocean - Godspeed 🕊️🎹",
   finalSurpriseURL: "https://open.spotify.com",
   finalMsg: "Happy 23rd Birthday Hanna! You are my forever Princess.",
-  letterMsg: "Happy 23rd Birthday, my favorite person in the entire universe! 💖 Every day with you feels like a dream I never want to wake up from. May this year bring you all the love, happiness, and adventures you deserve.",
+  letterMsg: `My dearest Hanna,\n\nHappy 23rd Birthday, my love! 👑💖\n\nTurning 23 is such a special milestone, and I feel so incredibly grateful to celebrate this day with you. From the first time we talked to all the late-night laughs, silly jokes, and quiet moments where we don't even need words—you've brought so much warmth, comfort, and pure happiness into my life.\n\nYou have this radiant energy that lights up everywhere you go, and your smile is still my absolute favourite thing in the entire world.\n\nAs you step into Level 23, I promise to always cheer for your dreams, hold your hand through every adventure, buy you your favourite iced matcha and sweet treats, and love you more and more every single day.\n\nHappy Birthday, my princess. Here's to us, today and forever.\n\nForever & always yours,\nAfiq 🌹✨`,
   story: [
     {
       id: "st-1",

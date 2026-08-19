@@ -6,15 +6,17 @@ interface AudioPlayerMiniProps {
   customTitle?: string;
 }
 
-const SONG_TITLE = "Happy Birthday";
+const SONG_TITLE = "Frank Ocean - Godspeed 🕊️🎹";
 
 export const AudioPlayerMini: React.FC<AudioPlayerMiniProps> = ({ customTitle }) => {
   const [isPlaying, setIsPlaying] = useState(sound.isPlayingBGM());
   const [volume, setVolume] = useState(sound.getVolume());
+  const [currentTitle, setCurrentTitle] = useState(sound.getTrackTitle());
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIsPlaying(sound.isPlayingBGM());
+      setCurrentTitle(sound.getTrackTitle());
     }, 500);
     return () => clearInterval(interval);
   }, []);
@@ -38,7 +40,7 @@ export const AudioPlayerMini: React.FC<AudioPlayerMiniProps> = ({ customTitle })
     sound.setVolume(val);
   };
 
-  const displayTitle = customTitle || SONG_TITLE;
+  const displayTitle = customTitle || currentTitle;
 
   return (
     <div className="w-full max-w-md mx-auto mt-4 bg-[#18061a]/95 border border-pink-500/40 rounded-2xl p-3.5 backdrop-blur-md glow-pink shadow-lg select-none">

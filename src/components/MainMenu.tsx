@@ -92,6 +92,10 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   }, []);
 
   useEffect(() => {
+    // Play Happy Birthday theme exclusively on the Home Screen / Sanctuary
+    sound.playHappyBirthday();
+    setIsPlaying(sound.isPlayingBGM());
+
     const audioSyncInterval = setInterval(() => {
       setIsPlaying(sound.isPlayingBGM());
     }, 500);
@@ -101,15 +105,20 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const handleTogglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     sound.playClick();
-    const active = sound.toggleBGM();
-    setIsPlaying(active);
+    if (isPlaying) {
+      sound.stopBGM();
+      setIsPlaying(false);
+    } else {
+      sound.playHappyBirthday();
+      setIsPlaying(true);
+    }
   };
 
   const handleRestartSong = (e: React.MouseEvent) => {
     e.stopPropagation();
     sound.playClick();
     sound.stopBGM();
-    sound.startBGM();
+    sound.playHappyBirthday();
     setIsPlaying(true);
   };
 
@@ -223,7 +232,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
             <div className="absolute bottom-2.5 right-3 font-mono text-[10px] text-pink-200 bg-black/70 px-2.5 py-0.5 rounded-full border border-pink-500/40 flex items-center gap-1 backdrop-blur-md shadow-md">
               <Sparkles className="w-2.5 h-2.5 text-amber-300" />
-              <span>THE GOLDEN HOURS // 2023 - 2026</span>
+              <span>THE GOLDEN HOURS // 2024 - 2026</span>
             </div>
           </div>
         </motion.div>
@@ -425,7 +434,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               Now Playing
             </div>
             <div className="text-xs font-bold text-pink-100 truncate mt-0.5 font-sans">
-              {musicTitle || "Happy Birthday"}
+              Happy Birthday to You 🎂👑
             </div>
           </div>
         </motion.div>

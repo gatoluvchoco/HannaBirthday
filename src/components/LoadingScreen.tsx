@@ -179,7 +179,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
     }
 
     sound.playLevelUp();
-    sound.startBGM(0);
+    sound.playHappyBirthday();
     confetti({
       particleCount: 90,
       spread: 90,
