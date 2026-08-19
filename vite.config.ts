@@ -4,8 +4,11 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  // Support GitHub Actions configure-pages output or fallback to relative ./
+  const base = process.env.BASE_PATH || process.env.VITE_BASE_PATH || './';
+
   return {
-    base: './',
+    base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
