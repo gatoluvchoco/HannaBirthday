@@ -14,6 +14,7 @@ interface HeaderHUDProps {
   onOpenSettings: () => void;
   onTriggerEasterEgg: () => void;
   onManualSave?: () => void;
+  onViewLockScreen?: () => void;
 }
 
 export const HeaderHUD: React.FC<HeaderHUDProps> = ({
@@ -28,6 +29,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   onOpenSettings,
   onTriggerEasterEgg,
   onManualSave,
+  onViewLockScreen,
 }) => {
   const [avatarClicks, setAvatarClicks] = useState(0);
   const [birminghamTime, setBirminghamTime] = useState('');
@@ -105,10 +107,18 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
                   <span>🎀</span>
                   <span>HER ROYAL HIGHNESS</span>
                 </span>
-                <span className="text-[10px] font-mono text-amber-300 bg-pink-950/80 border border-pink-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    sound.playClick();
+                    if (onViewLockScreen) onViewLockScreen();
+                  }}
+                  className="text-[10px] font-mono text-amber-300 bg-pink-950/80 border border-pink-500/40 hover:border-pink-300 px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-all cursor-pointer shadow-sm hover:scale-105"
+                  title="View Birmingham Birthday Lock & Teaser Countdown"
+                >
                   <Clock className="w-2.5 h-2.5 text-amber-300" />
-                  <span>BHAM: {birminghamTime || '00:00'}</span>
-                </span>
+                  <span>BHAM: {birminghamTime || '00:00'} (BST) 🔒</span>
+                </button>
               </div>
 
               <h1 className="text-xl sm:text-2xl font-black text-white m-0 tracking-tight flex items-center gap-2 mt-0.5">

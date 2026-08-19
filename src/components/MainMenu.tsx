@@ -211,25 +211,19 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             </p>
           </div>
 
-          {/* Photo Scanline Polaroid Frame */}
-          <div className="mt-4 h-44 sm:h-48 bg-[#0a030c] border border-pink-500/30 rounded-2xl flex items-center justify-center relative overflow-hidden group-hover:border-pink-400/60 transition-colors shadow-inner">
-            <div 
-              className="absolute inset-0 pointer-events-none opacity-25"
-              style={{
-                backgroundImage: 'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(244, 114, 182, 0.15) 3px)'
-              }}
+          {/* Direct GIF Image Frame */}
+          <div className="mt-4 h-48 sm:h-52 bg-[#0a030c] border border-pink-500/40 rounded-2xl flex items-center justify-center relative overflow-hidden group-hover:border-pink-400 transition-colors shadow-lg">
+            <img 
+              src="https://i.postimg.cc/ZRPj1bHf/pic5.gif" 
+              style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} 
+              alt="The Golden Hours" 
+              className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-            <div className="flex flex-col items-center gap-2 text-pink-200 z-10">
-              <div className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform filter drop-shadow">
-                📸
-              </div>
-              <span className="text-[11px] font-mono tracking-widest text-pink-300">OUR_ROYAL_JOURNEY.RAW</span>
-            </div>
-
-            <div className="absolute bottom-2.5 right-3 font-mono text-[10px] text-pink-300/90 bg-black/60 px-2.5 py-0.5 rounded-full border border-pink-500/40 flex items-center gap-1 backdrop-blur-md">
+            <div className="absolute bottom-2.5 right-3 font-mono text-[10px] text-pink-200 bg-black/70 px-2.5 py-0.5 rounded-full border border-pink-500/40 flex items-center gap-1 backdrop-blur-md shadow-md">
               <Sparkles className="w-2.5 h-2.5 text-amber-300" />
-              <span>CHAPTER 01 // 2023 - 2026</span>
+              <span>THE GOLDEN HOURS // 2023 - 2026</span>
             </div>
           </div>
         </motion.div>

@@ -20,28 +20,32 @@ export const DEFAULT_CONFIG: AppConfig = {
       date: "July 2024",
       title: "Blond Sweater",
       msg: "The day you gave me this sweater is a moment etched forever in my heart. Wearing it feels like being wrapped in your warmest hug, carrying your love and sweetness everywhere I go. It brought the biggest smile to my face and made me truly, deeply happy.",
-      icon: "🧶"
+      icon: "🧶",
+      image: "https://i.postimg.cc/pTQkgWC7/pic1.jpg"
     },
     {
       id: "st-2",
       date: "August 2025",
       title: "Roblox Adventures",
       msg: "I remember back then when I played Roblox with you, every single moment was pure joy, filled with sweet laughter and cute chaos. Running around virtual worlds hand in hand with you turned simple games into the most precious, unforgettable memories that I cherish so deeply.",
-      icon: "🎮"
+      icon: "🎮",
+      image: "https://i.postimg.cc/0QGZLknL/pic2.jpg"
     },
     {
       id: "st-3",
       date: "August 2024",
       title: "Call from My Laptop",
       msg: "I still remember those nights when my phone was barely working, so I stayed on video calls with you through my laptop until we both fell asleep. Having your gentle voice and sweet presence by my side made every night feel so comforting and warm. I truly miss those wonderful days and cherish every late night we spent together.",
-      icon: "💻"
+      icon: "💻",
+      image: "https://i.postimg.cc/RF1GjSdb/pic3.jpg"
     },
     {
       id: "st-4",
-      date: "Chapter 4",
-      title: "Level 23 & Beyond 👑",
+      date: "August 2026",
+      title: "Level 23: The Grand Milestone",
       msg: "Celebrating Hanna's royal 23rd birthday! The story is still being written, and the best is yet to come.",
-      icon: "👑"
+      icon: "👑",
+      image: "https://i.postimg.cc/761XpH9d/pic4.jpg"
     }
   ],
   coupons: [
@@ -400,7 +404,7 @@ export function loadStoredConfig(): AppConfig {
       musicTitle = "Happy Birthday";
     }
 
-    // Sync story and memories to have the updated Blond Sweater and Roblox chapters
+    // Sync story to have the updated Blond Sweater, Roblox, Laptop, and Milestone direct images
     let updatedStory = Array.isArray(parsed.story) ? parsed.story : DEFAULT_CONFIG.story;
     updatedStory = updatedStory.map((s: any) => {
       if (s.id === 'st-1' || s.title?.includes('Spark') || s.title?.includes('Blond')) {
@@ -411,6 +415,7 @@ export function loadStoredConfig(): AppConfig {
           title: 'Blond Sweater',
           msg: "The day you gave me this sweater is a moment etched forever in my heart. Wearing it feels like being wrapped in your warmest hug, carrying your love and sweetness everywhere I go. It brought the biggest smile to my face and made me truly, deeply happy.",
           icon: '🧶',
+          image: "https://i.postimg.cc/pTQkgWC7/pic1.jpg"
         };
       }
       if (s.id === 'st-2' || s.title?.includes('Jokes') || s.title?.includes('Magical') || s.title?.includes('Roblox')) {
@@ -421,6 +426,7 @@ export function loadStoredConfig(): AppConfig {
           title: 'Roblox Adventures',
           msg: "I remember back then when I played Roblox with you, every single moment was pure joy, filled with sweet laughter and cute chaos. Running around virtual worlds hand in hand with you turned simple games into the most precious, unforgettable memories that I cherish so deeply.",
           icon: '🎮',
+          image: "https://i.postimg.cc/0QGZLknL/pic2.jpg"
         };
       }
       if (s.id === 'st-3' || s.title?.includes('Drives') || s.title?.includes('Stars') || s.title?.includes('Laptop') || s.title?.includes('Matcha')) {
@@ -431,6 +437,18 @@ export function loadStoredConfig(): AppConfig {
           title: 'Call from My Laptop',
           msg: "I still remember those nights when my phone was barely working, so I stayed on video calls with you through my laptop until we both fell asleep. Having your gentle voice and sweet presence by my side made every night feel so comforting and warm. I truly miss those wonderful days and cherish every late night we spent together.",
           icon: '💻',
+          image: "https://i.postimg.cc/RF1GjSdb/pic3.jpg"
+        };
+      }
+      if (s.id === 'st-4' || s.title?.includes('Level 23') || s.title?.includes('Chapter 4')) {
+        return {
+          ...s,
+          id: 'st-4',
+          date: 'August 2026',
+          title: 'Level 23: The Grand Milestone',
+          msg: "Celebrating Hanna's royal 23rd birthday! The story is still being written, and the best is yet to come.",
+          icon: '👑',
+          image: "https://i.postimg.cc/761XpH9d/pic4.jpg"
         };
       }
       return s;

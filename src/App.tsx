@@ -14,6 +14,7 @@ import confetti from 'canvas-confetti';
 
 import { StarfieldBackground } from './components/StarfieldBackground';
 import { LoadingScreen } from './components/LoadingScreen';
+import { BirminghamBirthdayLock } from './components/BirminghamBirthdayLock';
 import { HeaderHUD } from './components/HeaderHUD';
 import { MainMenu } from './components/MainMenu';
 import { OurStory } from './components/OurStory';
@@ -23,6 +24,7 @@ import { LoveLetter } from './components/LoveLetter';
 import { FinalSurprise } from './components/FinalSurprise';
 import { ConfigModal } from './components/ConfigModal';
 import { Sparkles, Heart, Trophy, X } from 'lucide-react';
+import { getTimezoneCountdown, isUserInMalaysia } from './utils/timeZone';
 
 export default function App() {
   const [config, setConfig] = useState<AppConfig>(loadStoredConfig);
@@ -31,6 +33,14 @@ export default function App() {
   const [crtEnabled, setCrtEnabled] = useState(false);
   const [isMuted, setIsMuted] = useState(sound.getMuted());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showLockScreenView, setShowLockScreenView] = useState(false);
+  const [hasUnlockedGate, setHasUnlockedGate] = useState<boolean>(() => {
+    try {
+      return getTimezoneCountdown().isUnlocked;
+    } catch {
+      return false;
+    }
+  });
   const [xpToast, setXpToast] = useState<{ id: number; amount: number; reason: string } | null>(null);
   const [easterEggModal, setEasterEggModal] = useState(false);
 
@@ -297,8 +307,39 @@ export default function App() {
         />
       )}
 
-      {/* Screen Routing */}
-      {activeSection === 'loading' ? (
+      {/* Screen Routing: 1. Birmingham Birthday Countdown Lock -> 2. Catch-Me Intro Screen -> 3. Main Sanctuary */}
+      {!hasUnlockedGate ? (
+        <BirminghamBirthdayLock
+          girlfriendName={config.girlfriendName}
+          yourName={config.yourName}
+          level={config.level}
+          onUnlockSuccess={() => {
+            setHasUnlockedGate(true);
+            try {
+              sessionStorage.setItem('bham_unlocked_manual', 'true');
+            } catch {
+              // ignore
+            }
+            setActiveSection('loading');
+          }}
+        />
+      ) : showLockScreenView ? (
+        <div className="relative min-h-screen">
+          <button
+            onClick={() => setShowLockScreenView(false)}
+            className="fixed top-4 left-4 z-50 flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#1c081e] border border-pink-500/40 text-pink-200 text-xs font-mono hover:bg-[#2e0e31] transition-all cursor-pointer shadow-lg"
+          >
+            <span>← RETURN TO SANCTUARY</span>
+          </button>
+          <BirminghamBirthdayLock
+            girlfriendName={config.girlfriendName}
+            yourName={config.yourName}
+            level={config.level}
+            onUnlockSuccess={() => setShowLockScreenView(false)}
+            isBypassed={true}
+          />
+        </div>
+      ) : activeSection === 'loading' ? (
         <LoadingScreen
           onStart={() => navigateTo('main-menu')}
           onResetProgress={handleResetProgress}
@@ -322,6 +363,7 @@ export default function App() {
             onOpenSettings={() => setIsSettingsOpen(true)}
             onTriggerEasterEgg={triggerEasterEgg}
             onManualSave={handleManualSave}
+            onViewLockScreen={() => setShowLockScreenView(true)}
           />
 
           {/* Active Interactive Section */}

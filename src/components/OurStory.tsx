@@ -64,6 +64,23 @@ export const OurStory: React.FC<OurStoryProps> = ({
     setIsAdding(false);
   };
 
+  const getStoryImage = (item: StoryEvent): string => {
+    if (item.image && !item.image.includes('unsplash')) return item.image;
+    if (item.id === 'st-1' || item.title.toLowerCase().includes('blond') || item.title.toLowerCase().includes('sweater')) {
+      return "https://i.postimg.cc/pTQkgWC7/pic1.jpg";
+    }
+    if (item.id === 'st-2' || item.title.toLowerCase().includes('roblox')) {
+      return "https://i.postimg.cc/0QGZLknL/pic2.jpg";
+    }
+    if (item.id === 'st-3' || item.title.toLowerCase().includes('laptop') || item.title.toLowerCase().includes('call')) {
+      return "https://i.postimg.cc/RF1GjSdb/pic3.jpg";
+    }
+    if (item.id === 'st-4' || item.title.toLowerCase().includes('level 23') || item.title.toLowerCase().includes('milestone')) {
+      return "https://i.postimg.cc/761XpH9d/pic4.jpg";
+    }
+    return item.image || "https://i.postimg.cc/761XpH9d/pic4.jpg";
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto px-3 sm:px-6 py-4 z-10">
       {/* Top Bar with Back Button */}
@@ -109,6 +126,7 @@ export const OurStory: React.FC<OurStoryProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
         {story.map((item, idx) => {
           const isClicked = allClicked.includes(item.id);
+          const itemImg = getStoryImage(item);
           return (
             <motion.div
               key={item.id}
@@ -136,21 +154,21 @@ export const OurStory: React.FC<OurStoryProps> = ({
                 <h3 className="text-base sm:text-lg font-serif-fancy font-bold text-white group-hover:text-pink-200 mb-2 transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-xs sm:text-sm font-sans text-pink-100/80 line-clamp-3 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-pink-100/80 line-clamp-3 leading-relaxed mb-3">
                   {item.msg}
                 </p>
               </div>
 
-              {item.image && (
-                <div className="mt-4 rounded-2xl overflow-hidden border border-pink-500/30 h-36 relative">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0e0310]/80 via-transparent to-transparent" />
-                </div>
-              )}
+              {/* Direct Image Frame */}
+              <div className="mt-2 rounded-2xl overflow-hidden border border-pink-500/40 h-44 sm:h-48 relative bg-black/40 shadow-md">
+                <img 
+                  src={itemImg} 
+                  alt={item.title}
+                  style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0310]/70 via-transparent to-transparent pointer-events-none" />
+              </div>
             </motion.div>
           );
         })}
@@ -192,11 +210,14 @@ export const OurStory: React.FC<OurStoryProps> = ({
                 {selectedEvent.title}
               </h3>
 
-              {selectedEvent.image && (
-                <div className="rounded-2xl overflow-hidden border border-pink-500/40 mb-4 max-h-56">
-                  <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />
-                </div>
-              )}
+              <div className="rounded-2xl overflow-hidden border border-pink-500/40 mb-4 h-52 sm:h-60 bg-black/50 shadow-md">
+                <img 
+                  src={getStoryImage(selectedEvent)} 
+                  alt={selectedEvent.title} 
+                  style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
+                  className="w-full h-full object-cover" 
+                />
+              </div>
 
               <p className="text-sm font-sans text-pink-100/90 leading-relaxed mb-5">
                 {selectedEvent.msg}

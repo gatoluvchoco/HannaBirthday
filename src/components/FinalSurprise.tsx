@@ -256,19 +256,9 @@ export const FinalSurprise: React.FC<FinalSurpriseProps> = ({
             <h4 className="font-serif-fancy text-lg sm:text-xl font-bold text-amber-200 mb-2">
               Afiq&apos;s Lifetime Love Promise
             </h4>
-            <p className="text-xs sm:text-sm text-pink-100 leading-relaxed mb-5 font-sans whitespace-pre-wrap">
+            <p className="text-xs sm:text-sm text-pink-100 leading-relaxed font-sans whitespace-pre-wrap">
               {finalMsg}
             </p>
-
-            <a
-              href={finalSurpriseURL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200 text-[#1f051c] font-serif-fancy font-black text-xs rounded-2xl shadow-lg hover:brightness-110 transition-all uppercase tracking-wider"
-            >
-              <span>ACCESS PHOTO &amp; GIFT VAULT</span>
-              <Sparkles className="w-3.5 h-3.5" />
-            </a>
           </motion.div>
         )}
       </motion.div>
