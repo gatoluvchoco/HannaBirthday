@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ActiveSection, AppConfig, MemoryItem, StoryEvent, UserProgress } from './types';
+import { ActiveSection, AppConfig, StoryEvent, UserProgress } from './types';
 import { 
   loadStoredConfig, 
   loadStoredProgress, 
@@ -17,8 +17,7 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { HeaderHUD } from './components/HeaderHUD';
 import { MainMenu } from './components/MainMenu';
 import { OurStory } from './components/OurStory';
-import { MemoryGallery } from './components/MemoryGallery';
-import { VirtualRoom } from './components/VirtualRoom';
+import { FutureDreamsList } from './components/FutureDreamsList';
 import { GamesMenu } from './components/MiniGames/GamesMenu';
 import { LoveLetter } from './components/LoveLetter';
 import { FinalSurprise } from './components/FinalSurprise';
@@ -177,18 +176,11 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Story & Memory item updates
+  // Story item updates
   const handleAddStoryEvent = (event: StoryEvent) => {
     setConfig(prev => ({
       ...prev,
       story: [...prev.story, event]
-    }));
-  };
-
-  const handleAddMemory = (memory: MemoryItem) => {
-    setConfig(prev => ({
-      ...prev,
-      memories: [...prev.memories, memory]
     }));
   };
 
@@ -370,37 +362,13 @@ export default function App() {
               />
             )}
 
-            {activeSection === 'memories' && (
-              <MemoryGallery
-                memories={config.memories}
-                visitedMemories={progress.visitedMemories || []}
-                onBack={() => navigateTo('main-menu')}
-                onGainXP={(amt, id) => {
-                  addXP(amt, "Viewed Sweet Polaroid");
-                  if (id) {
-                    setProgress(p => {
-                      const updated = {
-                        ...p,
-                        visitedMemories: p.visitedMemories?.includes(id)
-                          ? p.visitedMemories
-                          : [...(p.visitedMemories || []), id]
-                      };
-                      saveStoredProgress(updated);
-                      return updated;
-                    });
-                  }
-                }}
-                onAddMemory={handleAddMemory}
-              />
-            )}
-
             {activeSection === 'room' && (
-              <VirtualRoom
+              <FutureDreamsList
                 girlfriendName={config.girlfriendName}
                 interactedObjects={progress.interactedObjects || []}
                 onBack={() => navigateTo('main-menu')}
                 onGainXP={(amt, id) => {
-                  addXP(amt, "Found Room Keepsake");
+                  addXP(amt, "Explored Bucket List Dream");
                   if (id) {
                     setProgress(p => {
                       const updated = {

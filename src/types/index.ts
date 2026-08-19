@@ -9,7 +9,6 @@ export interface AppConfig {
   finalMsg: string;
   letterMsg: string;
   story: StoryEvent[];
-  memories: MemoryItem[];
   coupons: LoveCoupon[];
   trivia: TriviaItem[];
 }
@@ -21,15 +20,6 @@ export interface StoryEvent {
   msg: string;
   icon?: string;
   image?: string;
-}
-
-export interface MemoryItem {
-  id: string;
-  title: string;
-  desc: string;
-  date?: string;
-  img: string;
-  tag?: string;
 }
 
 export interface LoveCoupon {
@@ -53,7 +43,6 @@ export interface UserProgress {
   visitedSections: string[];
   interactedObjects: string[];
   visitedStoryEvents?: string[];
-  visitedMemories?: string[];
   gamesWon: string[];
   gameHighScores?: Record<string, number>;
   gameBestTimes?: Record<string, number>;
@@ -68,7 +57,6 @@ export type ActiveSection =
   | 'loading'
   | 'main-menu'
   | 'story'
-  | 'memories'
   | 'room'
   | 'games-menu'
   | 'letter'

@@ -255,7 +255,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           </div>
         </motion.div>
 
-        {/* BENTO ITEM 3 (1x1): Virtual Sanctuary / Bedroom */}
+        {/* BENTO ITEM 3 (1x1): Future Bucket List & Wish Lanterns */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -264,14 +264,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           className="lg:col-span-1 lg:row-span-1 bg-gradient-to-br from-[#1c091f]/90 to-[#120514]/90 border border-pink-500/30 hover:border-pink-400/80 rounded-3xl p-5 flex flex-col items-center justify-center gap-2.5 text-center cursor-pointer group hover:scale-[1.02] transition-all shadow-[0_4px_20px_rgba(244,114,182,0.12)] select-none"
         >
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-900/60 to-purple-900/40 border border-pink-500/40 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-md">
-            🧸
+            🌌
           </div>
           <div>
             <h3 className="text-base font-bold text-white group-hover:text-pink-300 transition-colors">
-              Hanna&apos;s Haven
+              Future Bucket List
             </h3>
             <p className="text-xs text-pink-300/90 font-mono mt-0.5">
-              Interact &amp; Relax ✨
+              Dreams &amp; Lanterns ✨
             </p>
           </div>
         </motion.div>
@@ -433,34 +433,6 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             <div className="text-xs font-bold text-pink-100 truncate mt-0.5 font-sans">
               {musicTitle || "Happy Birthday"}
             </div>
-          </div>
-        </motion.div>
-
-        {/* BENTO ITEM 8 (Full Width): Quick Access Polaroid Gallery */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.35 }}
-          onClick={() => handleOpenSection('memories')}
-          className="lg:col-span-4 bg-gradient-to-r from-[#1b081e]/90 via-[#170518]/90 to-[#1b081e]/90 border border-pink-500/30 hover:border-pink-400 rounded-3xl p-5 flex items-center justify-between cursor-pointer hover:shadow-[0_0_25px_rgba(244,114,182,0.2)] transition-all select-none"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-pink-900 to-purple-900 border border-pink-400/40 flex items-center justify-center text-xl shadow-sm">
-              🌸
-            </div>
-            <div>
-              <h4 className="text-sm sm:text-base font-serif-fancy font-bold text-white">
-                Memory Polaroid Gallery &amp; Keepsakes
-              </h4>
-              <p className="text-xs text-pink-200/70 font-sans">
-                Browse our aesthetic photo memories, apply cute filters &amp; upload new moments (+20 XP)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-mono text-pink-300 font-bold">
-            <span className="hidden sm:inline">Open Gallery</span>
-            <ArrowRight className="w-4 h-4" />
           </div>
         </motion.div>
 

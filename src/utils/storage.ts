@@ -14,58 +14,31 @@ export const DEFAULT_CONFIG: AppConfig = {
   finalSurpriseURL: "https://open.spotify.com",
   finalMsg: "Happy 23rd Birthday Hanna! You are my forever Princess.",
   letterMsg: "Happy 23rd Birthday, my favorite person in the entire universe! 💖 Every day with you feels like a dream I never want to wake up from. May this year bring you all the love, happiness, and adventures you deserve.",
-  memories: [
-    {
-      id: "mem-1",
-      title: "First Late Night Talk 🌙",
-      date: "Sweet Beginnings",
-      desc: "Remember when we talked for hours until the stars faded into morning glow? I knew right then you were special.",
-      img: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=80",
-      tag: "milestone"
-    },
-    {
-      id: "mem-2",
-      title: "Dream Porsche Cruise 🏎️",
-      date: "Future Dreams",
-      desc: "Driving down the coastal highway with you in the passenger seat, wind in our hair and our favorite song playing.",
-      img: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&auto=format&fit=crop&q=80",
-      tag: "fun"
-    },
-    {
-      id: "mem-3",
-      title: "Iced Matcha Dates 🍵",
-      date: "Everyday Magic",
-      desc: "Sharing our favorite green tea treats and exchanging little smiles across the table. Pure happiness.",
-      img: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&auto=format&fit=crop&q=80",
-      tag: "sweet"
-    },
-    {
-      id: "mem-4",
-      title: "Warm Teddy Hugs 🧸",
-      date: "Always & Forever",
-      desc: "Sending you endless soft cuddles and comfort whenever you need a safe harbor.",
-      img: "https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=600&auto=format&fit=crop&q=80",
-      tag: "sweet"
-    }
-  ],
   story: [
     {
       id: "st-1",
-      date: "Chapter 1",
-      title: "The First Spark ✨",
-      msg: "Two paths collided in the digital universe, igniting a connection that would change everything forever.",
-      icon: "✨"
+      date: "July 2024",
+      title: "Blond Sweater",
+      msg: "The day you gave me this sweater is a moment etched forever in my heart. Wearing it feels like being wrapped in your warmest hug, carrying your love and sweetness everywhere I go. It brought the biggest smile to my face and made me truly, deeply happy.",
+      icon: "🧶"
     },
     {
       id: "st-2",
-      date: "Chapter 2",
-      title: "Inside Jokes & Late Nights 💬",
-      msg: "Countless hours of laughter, secret nicknames, and realizing that no distance could dim this bond.",
-      icon: "💬"
+      date: "August 2025",
+      title: "Roblox Adventures",
+      msg: "I remember back then when I played Roblox with you, every single moment was pure joy, filled with sweet laughter and cute chaos. Running around virtual worlds hand in hand with you turned simple games into the most precious, unforgettable memories that I cherish so deeply.",
+      icon: "🎮"
     },
     {
       id: "st-3",
-      date: "Chapter 3",
+      date: "August 2024",
+      title: "Call from My Laptop",
+      msg: "I still remember those nights when my phone was barely working, so I stayed on video calls with you through my laptop until we both fell asleep. Having your gentle voice and sweet presence by my side made every night feel so comforting and warm. I truly miss those wonderful days and cherish every late night we spent together.",
+      icon: "💻"
+    },
+    {
+      id: "st-4",
+      date: "Chapter 4",
       title: "Level 23 & Beyond 👑",
       msg: "Celebrating Hanna's royal 23rd birthday! The story is still being written, and the best is yet to come.",
       icon: "👑"
@@ -336,7 +309,6 @@ export const INITIAL_PROGRESS: UserProgress = {
   visitedSections: [],
   interactedObjects: [],
   visitedStoryEvents: [],
-  visitedMemories: [],
   gamesWon: [],
   gameHighScores: {},
   gameBestTimes: {},
@@ -361,7 +333,6 @@ export function loadStoredProgress(): UserProgress {
       visitedSections: Array.isArray(parsed?.visitedSections) ? parsed.visitedSections : [],
       interactedObjects: Array.isArray(parsed?.interactedObjects) ? parsed.interactedObjects : [],
       visitedStoryEvents: Array.isArray(parsed?.visitedStoryEvents) ? parsed.visitedStoryEvents : [],
-      visitedMemories: Array.isArray(parsed?.visitedMemories) ? parsed.visitedMemories : [],
       gamesWon: Array.isArray(parsed?.gamesWon) ? parsed.gamesWon : [],
       gameHighScores: typeof parsed?.gameHighScores === 'object' && parsed?.gameHighScores !== null ? parsed.gameHighScores : {},
       gameBestTimes: typeof parsed?.gameBestTimes === 'object' && parsed?.gameBestTimes !== null ? parsed.gameBestTimes : {},
@@ -428,9 +399,47 @@ export function loadStoredConfig(): AppConfig {
     if (!musicTitle || musicTitle.includes('Melody') || musicTitle.includes('Lofi') || musicTitle.includes('Starlight')) {
       musicTitle = "Happy Birthday";
     }
+
+    // Sync story and memories to have the updated Blond Sweater and Roblox chapters
+    let updatedStory = Array.isArray(parsed.story) ? parsed.story : DEFAULT_CONFIG.story;
+    updatedStory = updatedStory.map((s: any) => {
+      if (s.id === 'st-1' || s.title?.includes('Spark') || s.title?.includes('Blond')) {
+        return {
+          ...s,
+          id: 'st-1',
+          date: 'July 2024',
+          title: 'Blond Sweater',
+          msg: "The day you gave me this sweater is a moment etched forever in my heart. Wearing it feels like being wrapped in your warmest hug, carrying your love and sweetness everywhere I go. It brought the biggest smile to my face and made me truly, deeply happy.",
+          icon: '🧶',
+        };
+      }
+      if (s.id === 'st-2' || s.title?.includes('Jokes') || s.title?.includes('Magical') || s.title?.includes('Roblox')) {
+        return {
+          ...s,
+          id: 'st-2',
+          date: 'August 2025',
+          title: 'Roblox Adventures',
+          msg: "I remember back then when I played Roblox with you, every single moment was pure joy, filled with sweet laughter and cute chaos. Running around virtual worlds hand in hand with you turned simple games into the most precious, unforgettable memories that I cherish so deeply.",
+          icon: '🎮',
+        };
+      }
+      if (s.id === 'st-3' || s.title?.includes('Drives') || s.title?.includes('Stars') || s.title?.includes('Laptop') || s.title?.includes('Matcha')) {
+        return {
+          ...s,
+          id: 'st-3',
+          date: 'August 2024',
+          title: 'Call from My Laptop',
+          msg: "I still remember those nights when my phone was barely working, so I stayed on video calls with you through my laptop until we both fell asleep. Having your gentle voice and sweet presence by my side made every night feel so comforting and warm. I truly miss those wonderful days and cherish every late night we spent together.",
+          icon: '💻',
+        };
+      }
+      return s;
+    });
+
     return { 
       ...DEFAULT_CONFIG, 
       ...parsed, 
+      story: updatedStory,
       trivia: DEFAULT_CONFIG.trivia,
       musicTitle: musicTitle || "Happy Birthday",
       level: parsed.level === 20 ? 23 : (parsed.level || 23) 
